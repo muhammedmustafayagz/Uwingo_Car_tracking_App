@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vehicle Map</title>
+
+  <!-- Leaflet (browser mapping library) CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .marker-label {
+      font-size: 10px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet (browser mapping library) JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    /*********************************************************************
+     * Basic definitions (first mention -> definition)
+     * WebView (embedded browser component in React Native): receives messages from RN.
+     * Leaflet (browser mapping library): used to render map + markers.
+     * Canvas (single HTML5 drawing surface): we use it to avoid DOM markers.
+     *********************************************************************/
+
+    // --- Map initialization ---
+    const map = L.map('map', {
+      // preferCanvas (Leaflet option to draw shapes on a single canvas): reduces DOM overhead.
+      preferCanvas: true,
+      center: [39.925533, 32.866287], // default center (Ankara), adjust as needed
+      zoom: 6,
+      minZoom: 2,
+    });
+
+    // Basic OpenStreetMap tile layer — you can swap for your own tile provider.
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+
+    // markersMap: id -> { marker: LeafletMarker, label: optionalDivIcon } 
+    const markersMap = new Map();
+
+    // layerGroup (Leaflet LayerGroup): container for fast add/remove operations.
+    const layerGroup = L.layerGroup().addTo(map);
+
+    // Helper: safe parse incoming messages
+    function parseMessageData(event) {
+      try {
+        // react-native-webview posts a string in event.data
+        const raw = event.data || event; // fallback
+        if (typeof raw === 'string') return JSON.parse(raw);
+        return raw;
+      } catch (err) {
+        console.warn('MapWebView: failed to parse message data', err);
+        return null;
+      }
+    }
+
+    // Main update function: receives a full list of vehicles
+    // Message shape expected: { type: 'FULL_UPDATE', vehicles: [ { id, lat, lng, ... } ] }
+    function applyFullUpdate(list) {
+      if (!Array.isArray(list)) return;
+
+
+      // Build a lookup for incoming vehicles
+      const incomingIds = new Set();
+      for (let v of list) {
+        const id = String(v.id ?? v.VehicleId ?? v.SerialNumber ?? v.serialNumber);
+        const lat = Number(v.lat ?? v.Latitude ?? v.trackingData?.Latitude);
+        const lng = Number(v.lng ?? v.Longitude ?? v.trackingData?.Longitude);
+
+        if (!isFinite(lat) || !isFinite(lng)) continue;
+
+        incomingIds.add(id);
+
+        const existing = markersMap.get(id);
+        if (existing) {
+          // quick position update: marker.setLatLng([lat, lng])
+          existing.marker.setLatLng([lat, lng]);
+
+          // Optionally update popup/label if changed — minimal DOM ops
+          if (v.label) {
+            if (!existing.labelEl) {
+              const div = L.divIcon({ className: 'marker-label', html: v.label });
+              existing.label = L.marker([lat, lng], { icon: div, interactive: false });
+              layerGroup.addLayer(existing.label);
+              existing.labelEl = existing.label;
+            } else {
+              existing.labelEl.setLatLng([lat, lng]);
+              existing.labelEl._icon && (existing.labelEl._icon.innerHTML = v.label);
+            }
+          }
+
+        } else {
+          // Create new canvas circle marker (L.circleMarker) -> rendered on canvas
+          const marker = L.circleMarker([lat, lng], {
+            radius: 4,
+            weight: 0,
+            fillOpacity: 0.9,
+            fillColor: v.color || '#2b8cff'
+          });
+
+          marker.addTo(layerGroup);
+
+          // store minimal state
+          markersMap.set(id, { marker, raw: v });
+        }
+      }
+
+      // Remove stale markers that are not in incomingIds
+      for (let [id, obj] of markersMap.entries()) {
+        if (!incomingIds.has(id)) {
+          // remove marker and optional label
+          layerGroup.removeLayer(obj.marker);
+          if (obj.labelEl) layerGroup.removeLayer(obj.labelEl);
+          markersMap.delete(id);
+        }
+      }
+
+
+
+      const bounds = layerGroup.getBounds();
+      if (bounds && bounds.isValid()) {
+        map.fitBounds(bounds, { maxZoom: 15, padding: [20, 20] });
+      }
+    }
+
+    // Message handler — listen for multiple event types for cross-platform support
+    function onMessage(event) {
+      const payload = parseMessageData(event);
+      if (!payload) return;
+
+      const type = payload.type;
+      if (type === 'FULL_UPDATE') {
+        applyFullUpdate(payload.vehicles || []);
+      } else if (type === 'ZOOM_TO') {
+        // e.g. { type: 'ZOOM_TO', lat: 41.0, lng: 29.0, zoom: 13 }
+        const lat = Number(payload.lat);
+        const lng = Number(payload.lng);
+        const z = Number(payload.zoom) || map.getZoom();
+        if (isFinite(lat) && isFinite(lng)) map.setView([lat, lng], z);
+      } else if (type === 'CENTER_AND_FIT') {
+        // e.g. center and fit all markers
+        const bounds = layerGroup.getBounds();
+        if (bounds && bounds.isValid()) map.fitBounds(bounds, { maxZoom: 15, padding: [20, 20] });
+      }
+    }
+
+    // React-Native WebView posts messages that appear as "message" events or "message" on document
+    window.addEventListener('message', onMessage);
+    document.addEventListener('message', onMessage); // Android support
+    // Some older RN setups pass the raw string directly to the body, also handle by overriding onmessage
+    window.onmessage = onMessage;
+
+    // Convenience: confirm ready to RN
+    function sendReady() {
+      const msg = JSON.stringify({ type: 'READY' });
+      if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+        window.ReactNativeWebView.postMessage(msg);
+      } else if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage(msg, '*');
+      }
+    }
+    setTimeout(sendReady, 500);
+
+  </script>
+</body>
+
+</html>
