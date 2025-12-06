@@ -1,5 +1,5 @@
 // fetchPipeline.ts
-import { FinalMapDTO } from "@/src/types/forMap";
+import { FinalMapDTO } from "../types/forMap";
 
 interface DeviceData {
   serialNumber: string;
@@ -43,7 +43,7 @@ export async function fetchFinalMapData(): Promise<FinalMapDTO[]> {
   })
 
   const secondData: DeviceData[] = await secondRes.json()
-  // console.log(" 2nd Data from active device : ", secondData)
+  // console.log(" 2nd Data from active device : ", secondData.length)
 
   // 4️⃣ Index B by serialNumber (✅ correct casing)
   const trackingBySerial = new Map(
@@ -51,40 +51,45 @@ export async function fetchFinalMapData(): Promise<FinalMapDTO[]> {
   )
 
   // 5️⃣ Final merge (✅ all casing fixed)
-  const result: FinalMapDTO[] = data.map((x: any) => {
-    const serial = x.deviceVehicle?.devices?.serialNumber
-    const tracking = trackingBySerial.get(serial)
+  const result: FinalMapDTO[] = data
+    .map((x: any) => {
+      const serial = x.deviceVehicle?.devices?.serialNumber;
 
-    return {
-      // isBlocked: tracking?.isBlocked ?? false,
-      Suffix: tracking?.suffix ?? null,
+      if (!serial || !trackingBySerial.has(serial)) {
+        return null; // skip if no tracking
+      }
 
-      trackingData: {
-        // DateTime: tracking?.DateTime ?? new Date().toISOString(),
-        Latitude: tracking?.latitude ?? 0,
-        Longitude: tracking?.longitude ?? 0,
-        OutPutStatus: tracking?.outPutStatus ?? false,
-        SerialNumber: serial,
-        speed: tracking?.speed ?? 0,
-        Suffix: tracking?.suffix ?? null,
-        WorkingStatus: tracking?.workingstatus ?? false,
-      },
+      const tracking = trackingBySerial.get(serial)!;
 
-      vehicles: {
-        CompnayApplicationId:
-          x.deviceVehicle?.devices?.companyApplicationId,
-        FirstKilometer: x.vehicle.firstKilometer,
-        IsItForRent: x.vehicle.isItForRent,
-        IsThereDriver: x.vehicle.isThereDriver,
-        Make: x.vehicle.make,
-        Model: x.vehicle.model,
-        Plate: x.vehicle.plate,
-        VIN: x.vehicle.vin,
-        VehicleId: x.vehicle.vehicleId,
-        Year: x.vehicle.year,
-      },
-    }
-  })
+      return {
+        Suffix: tracking.suffix,
+
+        trackingData: {
+          Latitude: tracking.latitude,
+          Longitude: tracking.longitude,
+          OutPutStatus: tracking.outPutStatus,
+          SerialNumber: serial,
+          speed: tracking.speed,
+          Suffix: tracking.suffix,
+          WorkingStatus: tracking.workingstatus,
+        },
+
+        vehicles: {
+          CompnayApplicationId:
+            x.deviceVehicle?.devices?.companyApplicationId ?? null,
+          FirstKilometer: x.vehicle?.firstKilometer ?? 0,
+          IsItForRent: x.vehicle?.isItForRent ?? false,
+          IsThereDriver: x.vehicle?.isThereDriver ?? false,
+          Make: x.vehicle?.make ?? "",
+          Model: x.vehicle?.model ?? "",
+          Plate: x.vehicle?.plate ?? "",
+          VIN: x.vehicle?.vin ?? "",
+          VehicleId: x.vehicle?.vehicleId ?? 0,
+          Year: x.vehicle?.year ?? 0,
+        },
+      };
+    })
+    .filter(Boolean) as FinalMapDTO[];
 
   // console.log("FINAL MAP DATA COUNT:", result.length)
   // console.log("SAMPLE DTO:", result[0])

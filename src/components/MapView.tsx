@@ -1,7 +1,7 @@
 import { fetchFinalMapData } from "../api/fetchPipeLine";
 import type { FinalMapDTO } from "../types/forMap";
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { AppState, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
 
 // Make sure this path is correct relative to this file!
@@ -9,12 +9,12 @@ import { WebView } from "react-native-webview";
 const mapHtmlFile = require("../../assets/mapView.html");
 
 type OutVehicle = {
-  id: string;
+  serialNumber: string;
   lat: number;
   lng: number;
-  label?: string;
-  speed?: number;
-  color?: string;
+  plate: string;
+  speed: number;
+  color: string;
 };
 
 export default function MapView() {
@@ -25,25 +25,26 @@ export default function MapView() {
   // Store latest vehicles here so we can send them as soon as map is ready
   const latestVehiclesRef = useRef<OutVehicle[]>([]);
 
+
+  // TODO : transform determine the shape of the data that gonna send to weview
   function transform(dto: FinalMapDTO[]): OutVehicle[] {
     return dto
       .map((x) => {
         // ... your existing logic ...
-        const id = String(
-          x.trackingData?.SerialNumber ??
-          x.vehicles?.VehicleId ??
-          Math.random()
+        const serialNumber: string = String(
+          x.trackingData?.SerialNumber
+
         );
 
-        const lat = Number(x.trackingData?.Latitude ?? 0);
-        const lng = Number(x.trackingData?.Longitude ?? 0);
+        const lat = Number(x.trackingData?.Latitude);
+        const lng = Number(x.trackingData?.Longitude);
 
         return {
-          id,
+          serialNumber,
           lat,
           lng,
-          label: String(x.vehicles?.Plate ?? x.vehicles?.VIN ?? ""),
-          speed: Number(x.trackingData?.speed ?? 0),
+          plate: String(x.vehicles?.Plate),
+          speed: Number(x.trackingData?.speed),
           color: x.trackingData?.WorkingStatus ? "#2b8cff" : "#d9534f",
         };
       })
@@ -56,10 +57,30 @@ export default function MapView() {
 
     // Only send if the WebView has told us it's ready
     if (isMapReady && webviewRef.current) {
-      const payload = JSON.stringify({ type: "FULL_UPDATE", vehicles });
+      const payload = JSON.stringify({ type: "FULL_UPDATE", data: vehicles });
       webviewRef.current.postMessage(payload);
     }
   }
+
+  // Add to your component to test if WebView is receiving messages
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'active' && webviewRef.current) {
+        // Test injection
+        webviewRef.current.injectJavaScript(`
+        if (typeof console.log === 'function') {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({type: 'console', data: {type: 'log', log: 'Injection verified'}})
+          );
+        }
+      `);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+
 
   useEffect(() => {
     let mounted = true;
@@ -70,6 +91,7 @@ export default function MapView() {
         if (!mounted) return;
 
         const vehicles = transform(dto);
+        // console.log(vehicles)
         postFullUpdateToWebView(vehicles);
       } catch (err) {
         console.log("Fetch error:", err);
@@ -103,13 +125,46 @@ export default function MapView() {
         if (latestVehiclesRef.current.length > 0) {
           const payload = JSON.stringify({
             type: "FULL_UPDATE",
-            vehicles: latestVehiclesRef.current
+            data: latestVehiclesRef.current
           });
           webviewRef.current?.postMessage(payload);
         }
+      } else if (msg.type === "console") { // lowercase to match
+        console.info(`[WebView Console ${msg.type}]`, msg.data.log || msg.data);
+      } else {
+        console.log('Unknown message type:', msg.type, msg.data);
       }
-    } catch (_) { }
+    } catch (err) {
+      console.error('Failed to parse WebView message:', err, e.nativeEvent.data);
+    }
   }
+
+  const debugging = `
+  const consoleLog = (type, log) => window.ReactNativeWebView.postMessage(
+    JSON.stringify({
+      'type': 'console', 
+      'data': log ? String(log) : 'undefined'
+    })
+  );
+  
+  // Override console methods BEFORE any other scripts run
+  console = {
+    log: (...args) => consoleLog('log', args.join(' ')),
+    debug: (...args) => consoleLog('debug', args.join(' ')),
+    info: (...args) => consoleLog('info', args.join(' ')),
+    warn: (...args) => consoleLog('warn', args.join(' ')),
+    error: (...args) => consoleLog('error', args.join(' ')),
+  };
+  
+  // Also hook into window.onerror for uncaught errors
+  window.onerror = function(message, source, lineno, colno, error) {
+    consoleLog('error', \`Uncaught: \${message} at \${source}:\${lineno}:\${colno}\`);
+    return false;
+  };
+  
+  // Confirm injection worked
+  console.log('[Debug] Console injected successfully');
+`;
 
   return (
     <View style={styles.container}>
@@ -120,12 +175,20 @@ export default function MapView() {
         onMessage={onMessage}
         onError={(e) => console.log("WebView error:", e.nativeEvent)}
         // originWhitelist is crucial for local HTML loading
+
+        webviewDebuggingEnabled={true}
+
+        setBuiltInZoomControls={false}
+        injectedJavaScript={debugging}
         originWhitelist={["*"]}
         javaScriptEnabled
         domStorageEnabled
         allowFileAccess
         mixedContentMode="always"
         style={styles.webview}
+        injectedJavaScriptBeforeContentLoaded={debugging}
+        onLoadEnd={() => console.log("WebView fully loaded")}
+        onLoadStart={() => console.log("WebView starting to load")}
       />
     </View>
   );
