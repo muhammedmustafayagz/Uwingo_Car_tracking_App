@@ -5,37 +5,23 @@
  * @format
  */
 
-import { StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider
-} from 'react-native-safe-area-context';
-import MapView from './components/MapView';
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+import { NavigationContainer } from '@react-navigation/native';
+import RootStack from './navigation/StackNavigator';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+export default function App() {
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <NavigationContainer>
+      <SafeAreaProvider>
+
+        <RootStack />
+      </SafeAreaProvider>
+    </NavigationContainer>
   );
 }
 
-function AppContent() {
 
-  return (
-    <View style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
-      <Text>This will stay below the status bar</Text>
-      <MapView />
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
-export default App;
+
+

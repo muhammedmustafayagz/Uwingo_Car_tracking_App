@@ -203,5 +203,7 @@ const styles = StyleSheet.create({
   webview: {
     flex: 1,
     backgroundColor: 'transparent' // Sometimes helps with rendering glitches
+    , borderWidth: 1, // Optional: helpful for debugging boundaries
+    borderColor: "red"
   },
 });

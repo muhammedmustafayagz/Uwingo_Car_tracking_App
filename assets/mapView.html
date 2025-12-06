@@ -666,7 +666,8 @@
         } else {
           // If no data passed, generate mock data
           console.log("this shouldn't run XX")
-          showNotification('Failed to update UI.', 'error');
+          // simulateDataFetch()
+          showNotification('Failed to load data. Please check connection.');
         }
 
         // Update markers based on the global vehiclesData
@@ -677,48 +678,48 @@
         throw error;
       }
     }
-
+    // use in order to debug when is server is not give response
     async function simulateDataFetch() {
       // LOGIC FIX: Generate actual mock data structure
       const mockData = [
         {
-          trackingData: {
-            serialNumber: "SN001",
-            latitude: 41.0082,
-            longitude: 28.9784,
-            speed: 45,
-            workingstatus: true
-          },
-          vehicles: {
-            plate: "34 ABC 123",
-            vehicleId: 1
-          }
+
+          serialNumber: "SN001",
+          latitude: 41.0082,
+          longitude: 28.9784,
+          speed: 45,
+          workingstatus: true,
+
+
+          plate: "34 ABC 123",
+          vehicleId: 1
+
         },
         {
-          trackingData: {
-            serialNumber: "SN002",
-            latitude: 41.0122,
-            longitude: 28.9850,
-            speed: 90, // Speeding
-            workingstatus: true
-          },
-          vehicles: {
-            plate: "34 XYZ 789",
-            vehicleId: 2
-          }
+
+          serialNumber: "SN002",
+          latitude: 41.0122,
+          longitude: 28.9850,
+          speed: 90, // Speeding
+          workingstatus: true,
+
+
+          plate: "34 XYZ 789",
+          vehicleId: 2
+
         },
         {
-          trackingData: {
-            serialNumber: "SN003",
-            latitude: 41.0050,
-            longitude: 28.9600,
-            speed: 0,
-            workingstatus: false
-          },
-          vehicles: {
-            plate: "34 TST 000",
-            vehicleId: 3
-          }
+
+          serialNumber: "SN003",
+          latitude: 41.0050,
+          longitude: 28.9600,
+          speed: 0,
+          workingstatus: false,
+
+
+          plate: "34 TST 000",
+          vehicleId: 3
+
         }
       ];
 
