@@ -71,7 +71,7 @@ const PacketFormModal = ({
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalContainer}>
 
           <View style={styles.header}>
-            <Text style={styles.title}>{initialData ? 'Edit Driver-Vehicle' : 'Add Driver-Vehicle'}</Text>
+            <Text style={styles.title}>{initialData ? 'Edit Packet' : 'Add Packet'}</Text>
             {/* <TouchableOpacity onPress={onClose}>
               <X color="#333" size={24} />
             </TouchableOpacity> */}
