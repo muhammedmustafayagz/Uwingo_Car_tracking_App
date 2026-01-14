@@ -2,11 +2,11 @@ import callApi from "@/api/config/apiCall";
 import { ENDPOINTS } from "@/api/endpoints";
 
 import z from "zod";
-import { DriverSchema, DriverApplicationT } from "@/types/comingData/drivers";
+import { DriverApplicationSchema, DriverApplicationT } from "@/types/comingData/drivers";
 
 export const DriverService = {
   // GET
-  getAll: () => callApi('get', ENDPOINTS.Drivers.get, z.array(DriverSchema)),
+  getAll: () => callApi('get', ENDPOINTS.Drivers.get, z.array(DriverApplicationSchema)),
 
   // create 
 

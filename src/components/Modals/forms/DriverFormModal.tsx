@@ -1,4 +1,4 @@
-import { DriverApplicationT, DriverSchema, DriverSchemaT } from '@/types/comingData/drivers';
+import { DriverApplicationT, DriverApplicationSchema, DriverApplicationSchemaT } from '@/types/comingData/drivers';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -12,17 +12,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import LucideIconButton from '../IconButton/LucideIconButton';
+import LucideIconButton from '@/components/IconButton/LucideIconButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-interface VehicleFormModalProps {
+interface DriverFormModalProps {
   visible: boolean;
   onClose: () => void;
   onSubmit: (data: Partial<DriverApplicationT>, method: "put" | 'post') => void;
   initialData?: DriverApplicationT | null;
 }
 
-const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFormModalProps) => {
+const DriverFormModal = ({ visible, onClose, onSubmit, initialData }: DriverFormModalProps) => {
 
 
   const [method, setMethod] = useState<"put" | "post">('post')
@@ -31,8 +31,11 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<DriverSchemaT>({
-    resolver: zodResolver(DriverSchema),
+  } = useForm({
+    resolver: zodResolver(DriverApplicationSchema.pick({
+      driverName: true,
+      driverCode: true,
+    })),
     mode: 'onBlur',
     defaultValues: {
       driverName: '',
@@ -141,7 +144,7 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
 
           >
 
-            <Text style={styles.saveButtonText}>Save Vehicle</Text>
+            <Text style={styles.saveButtonText}>Save Driver</Text>
           </TouchableOpacity>
 
 
@@ -151,7 +154,7 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
   );
 };
 
-export default VehicleFormModal;
+export default DriverFormModal;
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },

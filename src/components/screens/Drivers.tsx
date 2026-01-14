@@ -1,22 +1,19 @@
 import ResponsiveTable from '@/components/ResponsiveTable/ResponsiveTable';
-import { useGetVehicles, useDeleteVehicle, useUpdateVehicle, useCreateVehicle } from '@/store/server/useVehicles';
 
-import * as React from 'react';
-import ErrorScreen from './ErrorScreen';
-import SplashScreen from './SplashScreen';
-import { ColumnConfig } from '../ResponsiveTable/types';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Plus } from 'lucide-react-native';
-import VehicleFormModal from '../Modals/VehicleFormModals';
-import DeleteConfirmationModal from '../Modals/DeleteConfirmationModal';
-import ErrorModal from '../Modals/ErrorModal';
 import { NormalizedErrorT } from '@/types/auth';
-import LucideIconButton from '../IconButton/LucideIconButton';
+import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
+import LucideIconButton from '@/components/IconButton/LucideIconButton';
+import DeleteConfirmationModal from '../Modals/DeleteConfirmationModal';
+import ErrorModal from '@/components/Modals/ErrorModal';
+import { ColumnConfig } from '@/components/ResponsiveTable/types';
+import ErrorScreen from '@/components/Screens/ErrorScreen';
+import SplashScreen from '@/components/Screens/SplashScreen';
 
 
-import { DriverApplicationT } from '@/types/comingData/drivers';
 import { useCreateDriver, useDeleteDriver, useGetDrivers, useUpdateDriver } from '@/store/server/useDrivers';
-import DriverFormModals from '@/components/Modals/DriverFormModals';
+import { DriverApplicationT } from '@/types/comingData/drivers';
+import DriverFormModal from '@/components/Modals/forms/DriverFormModal';
 
 
 
@@ -25,7 +22,7 @@ import DriverFormModals from '@/components/Modals/DriverFormModals';
 
 const Drivers = () => {
 
-  const { data, isPending, isError, refetch } = useGetDrivers();
+  const { data, isPending, isError, refetch, error } = useGetDrivers();
   const mutationDelete = useDeleteDriver()
   const mutationUpdate = useUpdateDriver()
   const mutationAdd = useCreateDriver()
@@ -83,11 +80,16 @@ const Drivers = () => {
   const confirmAddandUpdate = (data: any, method: 'put' | 'post') => {
     console.log('hello from add ')
     console.log('method : ', method, "data", data)
+    const payloadData: DriverApplicationT = {
+      ...data,
+      companyApplicationId: selectedDriver?.companyApplicationId,
+      driverId: selectedDriver?.driverId
+    }
     if (method === 'put') {
       // We pass ONE object containing id and the rest of the data
-      console.log("the data sended for update", data)
+      console.log("the data sended for update", payloadData)
       mutationUpdate.mutate(
-        data,
+        payloadData,
         {
           onSuccess: () => {
             setSaveModalVisibility(false);
@@ -106,8 +108,9 @@ const Drivers = () => {
           setSaveModalVisibility(false);
           // TODO: Add toast success message here
         },
-        onError: () => {
+        onError: (error: NormalizedErrorT) => {
           setErrorModalVisibility(true)
+          setErrorMessage(error.message)
         }
       });
     }
@@ -121,7 +124,7 @@ const Drivers = () => {
   )
 
   if (isError) return (
-    <ErrorScreen onRetry={refetch} />
+    <ErrorScreen onRetry={refetch} message={error.message} />
   )
 
   // Manually define your columns to map labels to specific object keys
@@ -144,7 +147,7 @@ const Drivers = () => {
 
       <ResponsiveTable data={data} columns={columns} uniqueKey='driverId' handleEdit={handleEdit} handleDelete={handleDelete} />
 
-      <DriverFormModals
+      <DriverFormModal
         visible={saveModalVisibility}
         initialData={selectedDriver}
         onClose={() => setSaveModalVisibility(false)}
