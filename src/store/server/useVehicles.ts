@@ -1,12 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { VehicleService } from "@/api/services/vehicles/vehiclesService";
+import { VehicleService } from "@/api/services/vehiclesService";
 
 // useQueryClient is a custom hook that returns the current QueryClient instance.
-
-
-
-
-
 
 
 export const useGetVehicles = () => {

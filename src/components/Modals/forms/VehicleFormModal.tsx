@@ -1,24 +1,25 @@
+import LucideIconButton from '@/components/IconButton/LucideIconButton';
+import InputErrorMessage from '@/components/InputErrorMessage';
+import { VehicleApplicationSchema, VehicleApplicationT } from '@/types/comingData/vehicles';
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
+  KeyboardAvoidingView,
   Modal,
-  View,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
+  View,
 } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { X } from 'lucide-react-native';
-import { VehicleApplicationT } from '@/types/comingData/vehicles';
-import LucideIconButton from '../IconButton/LucideIconButton';
 
 interface VehicleFormModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (data: VehicleApplicationT, method: "put" | 'post') => void;
+  onSubmit: (data: Partial<VehicleApplicationT>, method: "put" | 'post') => void;
   initialData?: VehicleApplicationT | null;
 }
 
@@ -31,7 +32,17 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<VehicleApplicationT>({
+  } = useForm({
+    resolver: zodResolver(VehicleApplicationSchema.pick({
+      make: true,
+      model: true,
+      year: true,
+      vin: true,
+      firstKilometer: true,
+      plate: true,
+      isItForRent: true
+    })),
+
     defaultValues: {
       make: '',
       model: '',
@@ -94,14 +105,22 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
             <Controller
               control={control}
               name="plate"
-              rules={{ required: 'Plate is required' }}
+
               render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={[styles.input, errors.plate && styles.inputError]}
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder="34 ABC 123"
-                />
+                <>
+                  <TextInput
+                    style={[styles.input, errors.plate && styles.inputError]}
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder="34 ABC 123"
+                  />
+
+                  {
+                    errors.plate && (
+                      <InputErrorMessage errorMessage={errors?.plate?.message} />
+                    )
+                  }
+                </>
               )}
             />
 
@@ -114,7 +133,16 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
                   name="make"
                   rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
-                    <TextInput style={styles.input} value={value} onChangeText={onChange} placeholder="Toyota" />
+                    <>
+
+                      <TextInput style={styles.input} value={value} onChangeText={onChange} placeholder="Toyota" />
+                      {
+                        errors.make && (
+                          <InputErrorMessage errorMessage={errors?.make?.message} />
+                        )
+                      }
+                    </>
+
                   )}
                 />
               </View>
@@ -125,11 +153,21 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
                 <Controller
                   control={control}
                   name="model"
-                  rules={{ required: true }}
+
                   render={({ field: { onChange, value } }) => (
-                    <TextInput style={styles.input} value={value}
-                      onChangeText={onChange}
-                      placeholder="Corolla" />
+
+                    <>
+                      <TextInput style={styles.input} value={value}
+                        onChangeText={onChange}
+                        placeholder="Corolla" />
+
+                      {
+                        errors.model && (
+                          <InputErrorMessage errorMessage={errors?.model?.message} />
+                        )
+                      }
+                    </>
+
                   )}
                 />
               </View>
@@ -141,7 +179,17 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
               control={control}
               name="vin"
               render={({ field: { onChange, value } }) => (
-                <TextInput style={styles.input} value={value} onChangeText={onChange} />
+
+                <>
+
+                  <TextInput style={styles.input} value={value} onChangeText={onChange} />
+                  {
+                    errors.vin && (
+                      <InputErrorMessage errorMessage={errors?.vin?.message} />
+                    )
+                  }
+
+                </>
               )}
             />
 
@@ -153,12 +201,23 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
                   control={control}
                   name="year"
                   render={({ field: { onChange, value } }) => (
-                    <TextInput
-                      style={styles.input}
-                      keyboardType="numeric"
-                      value={String(value)}
-                      onChangeText={(val) => onChange(Number(val))}
-                    />
+
+                    <>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        value={String(value)}
+                        onChangeText={(val) => onChange(Number(val))}
+                      />
+                      {
+                        errors.year && (
+                          <InputErrorMessage errorMessage={errors?.year?.message} />
+                        )
+                      }
+
+
+                    </>
+
                   )}
                 />
               </View>
@@ -170,12 +229,21 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
                   control={control}
                   name="firstKilometer"
                   render={({ field: { onChange, value } }) => (
-                    <TextInput
-                      style={styles.input}
-                      keyboardType="numeric"
-                      value={String(value)}
-                      onChangeText={(val) => onChange(Number(val))}
-                    />
+
+                    <>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        value={String(value)}
+                        onChangeText={(val) => onChange(Number(val))}
+                      />
+
+                      {
+                        errors.firstKilometer && (
+                          <InputErrorMessage errorMessage={errors?.firstKilometer?.message} />
+                        )
+                      }
+                    </>
                   )}
                 />
               </View>
@@ -187,6 +255,8 @@ const VehicleFormModal = ({ visible, onClose, onSubmit, initialData }: VehicleFo
               control={control}
               name="isItForRent"
               render={({ field: { onChange, value } }) => (
+
+
                 <View style={styles.pickerContainer}>
                   <TouchableOpacity
                     style={[styles.radioBtn, value === true && styles.radioBtnActive]}

@@ -1,23 +1,16 @@
 import ResponsiveTable from '@/components/ResponsiveTable/ResponsiveTable';
-import { useGetVehicles, useDeleteVehicle, useUpdateVehicle, useCreateVehicle } from '@/store/server/useVehicles';
+import { useCreateVehicle, useDeleteVehicle, useGetVehicles, useUpdateVehicle } from '@/store/server/useVehicles';
 import { VehicleApplicationT } from '@/types/comingData/vehicles';
 import * as React from 'react';
-import ErrorScreen from './ErrorScreen';
-import SplashScreen from './SplashScreen';
-import { ColumnConfig } from '../ResponsiveTable/types';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Plus } from 'lucide-react-native';
-import VehicleFormModal from '../Modals/VehicleFormModals';
-import DeleteConfirmationModal from '../Modals/DeleteConfirmationModal';
-import ErrorModal from '../Modals/ErrorModal';
+import { StyleSheet, View } from 'react-native';
+import { ColumnConfig } from '@/components/ResponsiveTable/types';
 import { NormalizedErrorT } from '@/types/auth';
-import LucideIconButton from '../IconButton/LucideIconButton';
-
-
-
-
-
-
+import DeleteConfirmationModal from '@/components/Modals/DeleteConfirmationModal';
+import ErrorModal from '@/components/Modals/ErrorModal';
+import LucideIconButton from '@/components/IconButton/LucideIconButton';
+import VehicleFormModal from '@/components/Modals/forms/VehicleFormModal';
+import ErrorScreen from '@/components/Screens/ErrorScreen';
+import SplashScreen from '@/components/Screens/SplashScreen';
 
 
 
@@ -82,8 +75,13 @@ const Vehicles = () => {
     if (method === 'put') {
       // We pass ONE object containing id and the rest of the data
       console.log("the data sended for update", data)
+      const payloadData: VehicleApplicationT = {
+        ...data,
+        vehicleId: selectedVehicle?.vehicleId,
+        companyApplicationId: selectedVehicle?.companyApplicationId
+      }
       mutationUpdate.mutate(
-        data,
+        payloadData,
         {
           onSuccess: () => {
             setSaveModalVisibility(false);
@@ -103,8 +101,10 @@ const Vehicles = () => {
           setSaveModalVisibility(false);
           // TODO: Add toast success message here
         },
-        onError: () => {
+        onError: (error: NormalizedErrorT) => {
           setErrorModalVisibility(true)
+          setErrorMessage(error.message)
+
         }
       });
     }
@@ -151,7 +151,7 @@ const Vehicles = () => {
         visible={saveModalVisibility}
         initialData={selectedVehicle}
         onClose={() => setSaveModalVisibility(false)}
-        onSubmit={(data, method) => confirmAddandUpdate(data, method)}
+        onSubmit={(data: any, method: "put" | "post") => confirmAddandUpdate(data, method)}
       />
 
 

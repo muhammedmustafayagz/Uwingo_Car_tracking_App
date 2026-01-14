@@ -16,18 +16,34 @@ export interface VehicleApplicationT {
 }
 
 
-// TODO : ADD VALIDATION MESSAGES OF THE FORM HERE 
+
+
 export const VehicleApplicationSchema = z.object({
-  year: z.number(),
-  vin: z.string(),
-  vehicleId: z.number().nonnegative(),
-  plate: z.string(),
-  model: z.string(),
-  make: z.string(),
-  isThereDriver: z.boolean(),
-  isItForRent: z.boolean(),
-  firstKilometer: z.number().nonnegative(),
-  companyApplicationId: z.string(),
+
+  // TODO : araba yilini sinrlamak lazim
+  year: z.number({ message: "This Value Should be number" })
+    .min(1, "Please enter a valid year"),
+
+  // TODO: Required string with a minimum length (Standard VIN is 17)
+  vin: z.string({ message: "VIN is required" })
+    .min(1, "VIN must be at least 1 characters"),
+
+
+  plate: z.string({ message: "Plate is required" }).min(1, "Plate cannot be empty"),
+  model: z.string({ message: "Model is required" }).min(1, "Model cannot be empty"),
+  make: z.string({ message: "Make is required" }).min(1, "Make cannot be empty"),
+
+
+  isThereDriver: z.boolean({ message: "This field is required" }),
+  isItForRent: z.boolean({ message: "This field is required" }),
+
+
+  firstKilometer: z.number({ message: "This Value Should be number" })
+    .nonnegative("Kilometers cannot be negative"),
+
+
+  vehicleId: z.number().nonnegative().optional(),
+  companyApplicationId: z.string().optional(),
 });
 
 
