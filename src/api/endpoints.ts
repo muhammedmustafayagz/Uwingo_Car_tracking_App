@@ -62,26 +62,26 @@ export const ENDPOINTS = {
     update: `${BASE_URL}/api/Packets/update-packet`,
     delete: `${BASE_URL}/api/Packets/delete-packet`,
   },
-
+  // ✅
   PeriodicMaintenances: {
     get: `${BASE_URL}/api/PeriodicMaintenance/get-periodicmaintenance`,
     create: `${BASE_URL}/api/PeriodicMaintenance/create-periodicmaintenance`,
     update: `${BASE_URL}/api/PeriodicMaintenance/update-periodicmaintenance`,
     delete: `${BASE_URL}/api/PeriodicMaintenance/delete-periodicmaintenance`,
   },
-
+  // ✅
   VehicleCasco: {
     get: `${BASE_URL}/api/VehicleCasco/get-vehiclecasco`,
     create: `${BASE_URL}/api/VehicleCasco/create-vehiclecasco`,
     update: `${BASE_URL}/api/VehicleCasco/update-vehiclecasco`,
     delete: `${BASE_URL}/api/VehicleCasco/delete-vehiclecasco`,
   },
-
+  // ✅
   VehicleInsurance: {
     get: `${BASE_URL}/api/VehicleInsurance/get-vehicleinsurance`,
     create: `${BASE_URL}/api/VehicleInsurance/create-vehicleinsurance`,
     update: `${BASE_URL}/api/VehicleInsurance/update-vehicleinsurance`,
-    delete: `${BASE_URL}/api/VehicleInsurance/delete-vehicleinsurance/`,
+    delete: `${BASE_URL}/api/VehicleInsurance/delete-vehicleinsurance`,
   },
 
   VehicleSpeedLimit: {
