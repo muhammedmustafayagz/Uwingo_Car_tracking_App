@@ -48,14 +48,14 @@ export const ENDPOINTS = {
     update: `${BASE_URL}/api/DeviceVehicles/update-devicevehicle`,
     delete: `${BASE_URL}/api/DeviceVehicles/delete-devicevehicle/`,
   },
-
+  // ✅
   PacketContents: {
     get: `${BASE_URL}/api/PacketContent/get-packetcontent`,
     create: `${BASE_URL}/api/PacketContent/create-packetcontent`,
     update: `${BASE_URL}/api/PacketContent/update-packetcontent`,
     delete: `${BASE_URL}/api/PacketContent/delete-packetcontent`,
   },
-
+  // ✅
   Packets: {
     get: `${BASE_URL}/api/Packets/get-packet`,
     create: `${BASE_URL}/api/Packets/create-packet`,
@@ -67,14 +67,14 @@ export const ENDPOINTS = {
     get: `${BASE_URL}/api/PeriodicMaintenance/get-periodicmaintenance`,
     create: `${BASE_URL}/api/PeriodicMaintenance/create-periodicmaintenance`,
     update: `${BASE_URL}/api/PeriodicMaintenance/update-periodicmaintenance`,
-    delete: `${BASE_URL}/api/PeriodicMaintenance/delete-periodicmaintenance/`,
+    delete: `${BASE_URL}/api/PeriodicMaintenance/delete-periodicmaintenance`,
   },
 
   VehicleCasco: {
     get: `${BASE_URL}/api/VehicleCasco/get-vehiclecasco`,
-    create: `${BASE_URL}/api/VehicleCasco/get-vehiclecasco`,
+    create: `${BASE_URL}/api/VehicleCasco/create-vehiclecasco`,
     update: `${BASE_URL}/api/VehicleCasco/update-vehiclecasco`,
-    delete: `${BASE_URL}/api/VehicleCasco/delete-vehiclecasco/`,
+    delete: `${BASE_URL}/api/VehicleCasco/delete-vehiclecasco`,
   },
 
   VehicleInsurance: {
