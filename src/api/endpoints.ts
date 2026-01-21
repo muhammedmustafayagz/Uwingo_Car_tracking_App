@@ -88,7 +88,7 @@ export const ENDPOINTS = {
     get: `${BASE_URL}/api/VehicleSpeedLimit/get-vehiclespeedlimit`,
     create: `${BASE_URL}/api/VehicleSpeedLimit/create-vehiclespeedlimit`,
     update: `${BASE_URL}/api/VehicleSpeedLimit/update-vehiclespeedlimit`,
-    delete: `${BASE_URL}/api/VehicleSpeedLimit/delete-vehiclespeedlimit/`,
+    delete: `${BASE_URL}/api/VehicleSpeedLimit/delete-vehiclespeedlimit`,
   },
 
   VehicleInspection: {
@@ -102,7 +102,7 @@ export const ENDPOINTS = {
     get: `${BASE_URL}/api/VehicleRepair/get-vehiclerepair`,
     create: `${BASE_URL}/api/VehicleRepair/create-vehiclerepair`,
     update: `${BASE_URL}/api/VehicleRepair/update-vehiclerepair`,
-    delete: `${BASE_URL}/api/VehicleRepair/delete-vehiclerepair/`,
+    delete: `${BASE_URL}/api/VehicleRepair/delete-vehiclerepair`,
   },
 
 

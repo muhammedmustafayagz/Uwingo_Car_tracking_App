@@ -8,7 +8,9 @@ import VehicleCasco from '@/components/Screens/VehicleCasco';
 import VehicleInspection from '@/components/Screens/VehicleInspection';
 import VehicleInsurance from '@/components/Screens/VehicleInsurance';
 import VehicleMaintenance from '@/components/Screens/VehicleMaintenance';
+import VehicleRepair from '@/components/Screens/VehicleRepair';
 import Vehicles from '@/components/Screens/Vehicles';
+import VehicleSpeedLimit from '@/components/Screens/VehicleSpeedLimit';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 const Stack = createDrawerNavigator();
@@ -36,6 +38,8 @@ export default function RootStack() {
       <Stack.Screen name='Vehicle Casco' component={VehicleCasco} />
       <Stack.Screen name='Vehicle Inspectioon' component={VehicleInspection} />
       <Stack.Screen name='Vehicle Insurance' component={VehicleInsurance} />
+      <Stack.Screen name='Vehicle Repair' component={VehicleRepair} />
+      <Stack.Screen name='Vehicle Speed Limit' component={VehicleSpeedLimit} />
 
     </Stack.Navigator>
   );
