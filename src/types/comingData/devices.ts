@@ -4,7 +4,7 @@ export type DeviceApplicationT = {
   deviceId: number;
   serialNumber: string;
   model: string;
-  packetType: "STD" | "ACC";
+  packetType: string;
   suffix: string | null;
   devicePhoneNumber: string;
   isConnectedVehicles: boolean;
@@ -24,11 +24,7 @@ export const DeviceApplicationSchema = z.object({
   model: z.string().min(1, "Model is required"),
 
   // z.enum is cleaner for "STD" vs "ACC"
-  packetType: z.enum(["STD", "ACC"], {
-    error: () => {
-      return 'Packet Type is Required'
-    }
-  }),
+  packetType: z.string().min(1, "Packet type is required"),
 
 
   suffix: z.string().nullable().optional(),

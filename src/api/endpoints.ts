@@ -13,13 +13,14 @@ const BASE_URL = Config.API_BASE_URL;
 const MONGO_BASE_URL = Config.MONGO_BASE_URL;
 
 export const ENDPOINTS = {
+  // ✅
   Vehicles: {
     create: `${BASE_URL}/api/Vehicles/create-vehicle`,
     get: `${BASE_URL}/api/Vehicles/get-vehicles`,
     update: `${BASE_URL}/api/Vehicles/update-vehicle`,
     delete: `${BASE_URL}/api/Vehicles/delete-vehicle`,
   },
-
+  // ✅
   Drivers: {
     create: `${BASE_URL}/api/Drivers/create-driver`,
     get: `${BASE_URL}/api/Drivers/get-driver`,
@@ -32,7 +33,7 @@ export const ENDPOINTS = {
     create: `${BASE_URL}/api/Devices/create-device`,
     get: `${BASE_URL}/api/Devices/get-device`,
     update: `${BASE_URL}/api/Devices/update-device`,
-    delete: `${BASE_URL}/api/Devices/delete-device/`,
+    delete: `${BASE_URL}/api/Devices/delete-device`,
   },
 
   DriverVehicles: {
@@ -83,13 +84,14 @@ export const ENDPOINTS = {
     update: `${BASE_URL}/api/VehicleInsurance/update-vehicleinsurance`,
     delete: `${BASE_URL}/api/VehicleInsurance/delete-vehicleinsurance`,
   },
-
+  // ✅
   VehicleSpeedLimit: {
     get: `${BASE_URL}/api/VehicleSpeedLimit/get-vehiclespeedlimit`,
     create: `${BASE_URL}/api/VehicleSpeedLimit/create-vehiclespeedlimit`,
     update: `${BASE_URL}/api/VehicleSpeedLimit/update-vehiclespeedlimit`,
     delete: `${BASE_URL}/api/VehicleSpeedLimit/delete-vehiclespeedlimit`,
   },
+  // ✅
 
   VehicleInspection: {
     get: `${BASE_URL}/api/VehicleInspection/get-vehicleinspection`,
@@ -97,7 +99,7 @@ export const ENDPOINTS = {
     update: `${BASE_URL}/api/VehicleInspection/update-vehicleinspection`,
     delete: `${BASE_URL}/api/VehicleInspection/delete-vehicleinspection`,
   },
-
+  // ✅
   VehicleRepair: {
     get: `${BASE_URL}/api/VehicleRepair/get-vehiclerepair`,
     create: `${BASE_URL}/api/VehicleRepair/create-vehiclerepair`,
