@@ -5,39 +5,44 @@ import { Dropdown } from 'react-native-element-dropdown';
 interface Props {
   data: { label: string; value: any }[];
   onChange: (value: any) => void;
-  value: any; // Add this so the form can control the state
+  value: any;
   label?: string;
 }
 
-const DropdownComponent = ({
-  data, onChange, value, label = "Select an Item"
-}: Props) => {
-  // const [value, setValue] = useState(null);
+const DropdownComponent = ({ data, onChange, value, label = "" }: Props) => {
   const [isFocus, setIsFocus] = useState(false);
 
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <Dropdown
-        style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        data={data}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={!isFocus ? 'Select item' : '...'}
-        searchPlaceholder="Search..."
-        value={value}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={item => {
-          onChange(item.value); // IMPORTANT: Pass the value back
-          setIsFocus(false);
-        }}
-      />
+
+
+      {!data || data.length === 0 ? (
+        <View style={styles.noDataContainer}>
+          <Text style={styles.noDataText}>There Are No Selectable Items</Text>
+        </View>
+      ) : (
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: '#007AFF' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select item' : '...'}
+          searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(item) => {
+            onChange(item.value);
+            setIsFocus(false);
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -45,7 +50,7 @@ const DropdownComponent = ({
 export default DropdownComponent;
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
+  container: { padding: 5 },
   dropdown: {
     height: 50,
     borderColor: 'gray',
@@ -54,7 +59,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   label: { marginBottom: 8, fontSize: 14, fontWeight: 'bold' },
-  placeholderStyle: { fontSize: 16 },
+  placeholderStyle: { fontSize: 16, color: '#999' },
   selectedTextStyle: { fontSize: 16 },
   inputSearchStyle: { height: 40, fontSize: 16 },
+  noDataContainer: {
+    padding: 15,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: '#ddd',
+    borderStyle: 'dashed',
+  },
+  noDataText: {
+    color: '#888',
+    fontSize: 14,
+    fontStyle: 'italic',
+    textAlign: 'center'
+  },
 });
