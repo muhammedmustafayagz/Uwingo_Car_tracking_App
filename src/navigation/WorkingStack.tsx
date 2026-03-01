@@ -1,6 +1,6 @@
 import LoginScreen from "@/components/Screens/LoginScreen";
 import SplashScreen from "@/components/Screens/SplashScreen";
-import RootStack from "@/navigation/StackNavigator";
+import RootStack from "@/navigation/DrawerNavigator";
 
 /**
  * 
