@@ -1,3 +1,4 @@
+import { ReshapedData } from "@/components/Map/MapView";
 import { CreateInstantDataEndpoint_whatGet } from "@/types/forMap";
 
 export type RootDrawerParamList = {
@@ -15,7 +16,7 @@ export type RootDrawerParamList = {
   "Vehicle Insurance": undefined;
   "Vehicle Repair": undefined;
   "Vehicle Speed Limit": undefined;
-  "All Details With Street View": { item: Partial<VehicleData> };
+  "All Details With Street View": { item: Partial<VehicleData> | ReshapedData };
 };
 
 

@@ -2,12 +2,14 @@ import { ENDPOINTS } from '@/api/endpoints';
 import { getAddressFromCoords } from '@/utils/getAddressFromCoords';
 
 
-
+import MapControls from '@/components/Map/MapControls';
+import MapLayerSwitcher from '@/components/Map/MapLayerSwitcher';
 import ErrorModal from '@/components/Modals/ErrorModal';
 import DetailsCard from '@/components/Screens/AllDetailsWithStreetView/DetailsCard';
 import ErrorScreen from '@/components/Screens/ErrorScreen';
 import { RootDrawerParamList } from '@/navigation/types';
 import { useGetVehicleDetails } from '@/store/server/useVehicleDetails';
+import { VehicleDetails } from '@/types/ui';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { RouteProp } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -18,7 +20,6 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -44,53 +45,6 @@ type Props = {
 };
 
 
-export interface VehicleDetails {
-  // Vehicle Identification & Info
-  make: string;
-  modelVehicle: string;
-  year: number;
-  vehicleId: number;
-  vin: string;
-  plate: string;
-  serialNumber: string;
-  modelDevice: string;
-  packetType: string;
-  isConnectedVehicles: boolean;
-
-  // Maintenance Schedule
-  lastMaintenanceDate: string; // Consider using Date object if parsing
-  nextMaintenanceDate: string;
-  days: number;
-
-  // Driver Info
-  driverName: string;
-  driverCode: string;
-
-  // Insurance & Policy (Could be grouped into a nested interface)
-  policyNumber: string;
-  insuranceCompany: string;
-  startDate: string;
-  endDate: string;
-  inspectionDate: string;
-  expiryDate: string;
-  notes: string;
-
-  // Secondary Insurance Info
-  policyNumberInsurance: string;
-  insuranceCompanyInsurance: string;
-  startDateInsurance: string;
-  endDateInsurance: string;
-
-  // Repair Details
-  repairDate: string;
-  faultType: string;
-  faultDescription: string;
-  repairAction: string;
-  performedBy: string;
-  repairCost: number;
-  repairNotes: string;
-}
-
 
 
 
@@ -108,8 +62,6 @@ const AllDetailsWithStreetView: React.FC<Props> = ({
   const { data, isLoading, isError, error, refetch } = useGetVehicleDetails(item?.vehicleId ?? 0);
   // 3. Set initial map values from the item
 
-  const showMapillary = true; // Set default or pass via params
-  const showKartaview = true;
 
 
 
@@ -137,6 +89,15 @@ const AllDetailsWithStreetView: React.FC<Props> = ({
     speed: number
   } | null>(null);
 
+  const handleLayerChange = (layerKey: string) => {
+    const js = `window.switchLayer('${layerKey}');`;
+    webViewRef.current?.injectJavaScript(js);
+  };
+
+  const handleTrafficToggle = (enabled: boolean) => {
+    const js = `window.toggleTraffic(${enabled});`;
+    webViewRef.current?.injectJavaScript(js);
+  };
 
 
 
@@ -203,11 +164,7 @@ const AllDetailsWithStreetView: React.FC<Props> = ({
 
 
 
-  const toggleMapLayer = (layer: 'osm' | 'satellite' | 'topo') => {
-    setSelectedLayer(layer);
-    const jsCode = `switchLayer('${layer}'); true;`;
-    webViewRef.current?.injectJavaScript(jsCode);
-  };
+
 
 
   console.log('DATA CURRENT : ', JSON.stringify(trackingData))
@@ -300,38 +257,6 @@ const AllDetailsWithStreetView: React.FC<Props> = ({
 
 
 
-
-
-
-
-
-  const handleZoom = (type: 'in' | 'out') => {
-    if (!webViewRef.current) return;
-
-    // We use a template literal but be careful with quotes inside injectJavaScript
-    const jsCode = `
-    (function() {
-      try {
-        if (window.map) {
-          if ("${type}" === "in") {
-            window.map.zoomIn();
-          } else {
-            window.map.zoomOut();
-          }
-        }
-      } catch (e) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({
-          type: "console",
-          data: "Zoom Error: " + e.message
-        }));
-      }
-    })();
-    true;
-  `;
-
-    webViewRef.current.injectJavaScript(jsCode);
-  };
-
   // Header animation
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],
@@ -405,53 +330,7 @@ const AllDetailsWithStreetView: React.FC<Props> = ({
     );
   }
 
-  // Layer selector buttons
-  const renderLayerButtons = () => (
-    <View style={styles.layerSelector}>
-      <TouchableOpacity
-        style={[
-          styles.layerButton,
-          selectedLayer === 'osm' && styles.layerButtonActive,
-        ]}
-        onPress={() => toggleMapLayer('osm')}
-      >
-        <Text style={[
-          styles.layerButtonText,
-          selectedLayer === 'osm' && styles.layerButtonTextActive,
-        ]}>OSM</Text>
-      </TouchableOpacity>
 
-      {showMapillary && (
-        <TouchableOpacity
-          style={[
-            styles.layerButton,
-            selectedLayer === 'satellite' && styles.layerButtonActive,
-          ]}
-          onPress={() => toggleMapLayer('satellite')}
-        >
-          <Text style={[
-            styles.layerButtonText,
-            selectedLayer === 'satellite' && styles.layerButtonTextActive,
-          ]}>satellite</Text>
-        </TouchableOpacity>
-      )}
-
-      {showKartaview && (
-        <TouchableOpacity
-          style={[
-            styles.layerButton,
-            selectedLayer === 'topo' && styles.layerButtonActive,
-          ]}
-          onPress={() => toggleMapLayer('topo')}
-        >
-          <Text style={[
-            styles.layerButtonText,
-            selectedLayer === 'topo' && styles.layerButtonTextActive,
-          ]}>topo</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -497,62 +376,22 @@ const AllDetailsWithStreetView: React.FC<Props> = ({
             </View>
           )}
         />
-        {renderLayerButtons()}
+
+        <MapLayerSwitcher
+          onLayerChange={handleLayerChange}
+          onTrafficToggle={handleTrafficToggle}
+          position='bottomLeft'
+        />
 
         {/* Map Controls */}
-        <View style={styles.mapControls}>
-          <TouchableOpacity
-            style={styles.mapControlButton}
-            onPress={() => {
-              const lat = item?.lat; // Use the item from route.params directly for accuracy
-              const lng = item?.lng;
-              console.log(lat, lng)
-              if (lat && lng && webViewRef.current) {
-                // We wrap in a try-catch inside the injection to see the real error
-                const jsCode = `
-      (function() {
-        try {
-          if (window.updateLocation) {
-            window.updateLocation(${lat}, ${lng});
-          } else {
-            console.warn("updateLocation not found on window");
-          }
-        } catch (e) {
-          console.error("Injection failed: " + e.message);
-        }
-      })();
-      true;
-    `;
-                webViewRef.current.injectJavaScript(jsCode);
-              }
-            }}
+        {webViewRef.current && <MapControls
+          item={{ lat: item?.lat, lng: item?.lng }}
+          webViewRef={webViewRef}
+          zoomInfo={zoomInfo}
+          circles={false}
 
-          >
-            <Text style={styles.mapControlText}>📍</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+        />}
 
-            onPress={() => handleZoom('in')}
-            disabled={zoomInfo.current >= zoomInfo.max}
-            style={[
-              styles.mapControlButton,
-              zoomInfo.current >= zoomInfo.max && { opacity: 0.3 } // Faded look when disabled
-            ]}
-
-
-          >
-            <Text style={styles.mapControlText}>+</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleZoom('out')}
-            disabled={zoomInfo.current <= zoomInfo.min}
-            style={[
-              styles.mapControlButton,
-              zoomInfo.current <= zoomInfo.min && { opacity: 0.3 }
-            ]}>
-            <Text style={styles.mapControlText}>-</Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
       {/* Details Section */}

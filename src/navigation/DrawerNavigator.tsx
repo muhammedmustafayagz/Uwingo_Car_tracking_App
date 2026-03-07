@@ -43,7 +43,6 @@ import {
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 
 
-const ACTIVE_COLOR = "#E77803";
 
 export default function RootStack() {
   const { t } = useTranslation();

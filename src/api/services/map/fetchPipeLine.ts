@@ -8,9 +8,15 @@ import api from "@/api/config/api";
 
 export async function fetchFinalMapData(): Promise<CreateInstantDataEndpoint_whatGet[] | CreateInstantDataEndpoint_send[]> {
   console.log("start fetch pipeline")
+
   // 1️⃣ Fetch Active Devices
   const res = await api.get(ENDPOINTS.Devices.getActiveDevice);
   const deviceData: GetActiveDevicesEndPoint[] = res.data;
+
+  // 🔍 CHECK 1: Duplicates in Active Devices
+  // const activePlates = deviceData.map(d => d.vehicle?.plate).filter(Boolean);
+  // const activeSerials = deviceData.map(d => d.deviceVehicle?.devices?.serialNumber).filter(Boolean);
+
 
   // 2️⃣ Extract Serial Numbers
   const serialNumbers = deviceData
@@ -29,6 +35,11 @@ export async function fetchFinalMapData(): Promise<CreateInstantDataEndpoint_wha
   if (!mongoRes.ok) throw new Error("Failed to fetch MongoDB tracking data");
 
   const trackingDataRaw: GetBySerialNumberList_MongoEndPoint[] = await mongoRes.json();
+
+
+  // 🔍 CHECK 2: Duplicates in Mongo Response
+  // const mongoSerials = trackingDataRaw.map(t => t.serialNumber);
+  // findDuplicates(mongoSerials, "Step 3: MongoDB Serials");
 
   // 4️⃣ Create Dictionary for O(1) lookup
   const trackingMap = new Map(trackingDataRaw.map((t) => [t.serialNumber, t]));
@@ -65,6 +76,15 @@ export async function fetchFinalMapData(): Promise<CreateInstantDataEndpoint_wha
     })
     .filter((item): item is CreateInstantDataEndpoint_send => item !== null);
 
+
+  // 🔍 CHECK 3: Duplicates in Final Merged List
+  // const finalPlates = instantDataList.map(i => i.plate);
+  // const finalSerials = instantDataList.map(i => i.serialNumber);
+  // findDuplicates(finalPlates, "Step 5: Final Merged Plates");
+  // findDuplicates(finalSerials, "Step 5: Final Merged Serials");
+
+  // console.log("instant Data List", instantDataList)
+
   // 6️⃣ Sync back to the SQL Backend and get the Final UI Data
   if (instantDataList.length > 0) {
     try {
@@ -72,9 +92,14 @@ export async function fetchFinalMapData(): Promise<CreateInstantDataEndpoint_wha
       const finalRes = await api.post(ENDPOINTS.Others.instantData, instantDataList);
       // 
       console.log("-------FECH PIPELINE________________--")
-      console.log(finalRes.data)
+      // console.log(finalRes.data)
+      // const finalPlates = finalRes.data.map((i: CreateInstantDataEndpoint_whatGet) => i.plate);
+      // const finalSerials = finalRes.data.map((i: CreateInstantDataEndpoint_whatGet) => i.serialNumber);
+      // findDuplicates(finalPlates, "Step 6: Final Merged Plates");
+      // findDuplicates(finalSerials, "Step 6: Final Merged Serials");
+
       // Return the data property from the Axios response
-      return finalRes.data;
+      return findDuplicates(finalRes.data, 'Remove Duplicates Before Send it To UI');
     } catch (err) {
       // console.error("Failed to sync instant data to SQL:", err);
       //! Fallback: return the local list so the UI doesn't break if the sync fails
@@ -86,12 +111,45 @@ export async function fetchFinalMapData(): Promise<CreateInstantDataEndpoint_wha
 }
 
 
+function findDuplicates(arr: any[], label: string): any[] {
+  const seenIds = new Set();
+  const uniqueItems: any[] = [];
+
+  arr.forEach(item => {
+    // Replace 'serialNumber' with whatever unique key identifies your data
+    const identifier = item.serialNumber || item.plate;
+
+    if (!seenIds.has(identifier)) {
+      seenIds.add(identifier);
+      uniqueItems.push(item);
+    } else {
+      console.warn(`⚠️ DUPLICATE DETECTED [${label}]:`, identifier);
+    }
+  });
+
+  console.log(`✅ Processed ${label}. Unique count: ${uniqueItems.length}`);
+  return uniqueItems;
+}
 
 
 
 
+// function findDuplicates(arr: any[], label: string): (CreateInstantDataEndpoint_whatGet[]) {
+//   const seen = new Set<CreateInstantDataEndpoint_whatGet>();
+//   const duplicates = arr.filter(item => {
+//     if (seen.has(item)) return true;
+//     seen.add(item);
+//     return false;
+//   });
 
+//   if (duplicates.length > 0) {
+//     console.warn(`⚠️ DUPLICATES FOUND [${label}]:`, duplicates);
+//   } else {
+//     console.log(`✅ No duplicates in ${label}`);
+//   }
 
+//   return Array.from(seen)
+// }
 
 
 

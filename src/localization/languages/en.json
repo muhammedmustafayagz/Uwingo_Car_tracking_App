@@ -56,6 +56,16 @@
     "descriptionLength": "The description should be at least 3 characters"
   },
   "common": {
+    "allVehicles": "All Vehicles",
+    "returnToList": "Return To List",
+    "movingVehicles": "Moving Vehicles",
+    "violatingVehicles": "Violating Vehicles",
+    "stationaryVehicles": "Stationary Vehicles",
+    "generalSituation": "General Situation",
+    "totalVehicles": "Total Vehicles",
+    "total": "Total",
+    "vehiclesList": "Vehicles List",
+    "showInfo": "Show Info",
     "home": "Home Page",
     "N/A": "Not Assigned",
     "daysRemaining": "Days Remaining",

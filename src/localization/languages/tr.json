@@ -56,6 +56,16 @@
     "descriptionLength": "Açıklama en az 3 karakter olmalıdır"
   },
   "common": {
+    "allVehicles": "Tüm Araçlar",
+    "returnToList": "Listeye Dön",
+    "movingVehicles": "Hareketli Araçlar",
+    "violatingVehicles": "İhlalli Araçlar",
+    "stationaryVehicles": "Duran Araçlar",
+    "totalVehicles": "Toplam Araç",
+    "generalSituation": "Genel Durum",
+    "total": "Toplam",
+    "vehiclesList": "Araç Listesi",
+    "showInfo": "Detayları Göster",
     "home": "Ana Sayfa",
     "N/A": "Atanmamış",
     "daysRemaining": "Kalan Gün",

@@ -7,7 +7,22 @@ export const COLORS = {
   // --- Brand Colors ---
   primary: '#E77803',           // Your main orange
   primaryLight: '#FFF4E6',      // Background for active items (Drawer/Tabs)
-  primaryDark: '#B96002',       // Darker shade for pressed states
+  primaryDark: '#B96002',     // Darker shade for pressed states
+
+  // Status of Car 
+  active: '#00E676',
+  violations: '#FF1744',
+  inactive: '#999',       // Grayed out buttons or icons
+
+  routeViolation: '#af52dec9',
+  speedViolation: '#ff3b30e6',
+
+
+  // Background variants (15% opacity)
+  activeBg: 'rgba(0, 230, 118, 0.1)',
+  violationsBg: 'rgba(255, 23, 68, 0.15)',
+  inactiveBg: 'rgba(153, 153, 153, 0.15)',
+
 
   // --- Functional Action Colors ---
   danger: '#C62828',            // Wrong, Error, Delete (Deep Red)
@@ -28,8 +43,7 @@ export const COLORS = {
   textPrimary: '#2D2D2D',       // Main headers and body text
   textSecondary: '#757575',     // Subtitles and labels
   border: '#E0E0E0',            // Subtle dividers and input borders
-  disabled: '#BDBDBD',
-  inactive: '#666'         // Grayed out buttons or icons
+  disabled: '#BDBDBD'
 };
 
 export const SPACING = {

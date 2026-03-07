@@ -66,36 +66,79 @@
 
 
     // 1. Define all your available layers here
+    // 1. Define all available base maps
     const baseLayers = {
-      osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+      osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }),
       satellite: L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        zIndex: 1
+        attribution: '© Google'
       }),
       topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        zIndex: 1
-      })
+        attribution: '© OpenTopoMap'
+      }),
+      dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+      }),
+      light: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+      }),
+      voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+      }),
+      terrain: L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google'
+      }),
+      google_standard: L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google'
+      }),
+      google_transit: L.tileLayer('http://{s}.google.com/vt/lyrs=m,transit&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google'
+      }),
     };
 
-    // 2. The Universal Switcher
-    window.switchLayer = function (layerKey) {
-      console.log("Switching to layer:", layerKey);
+    // 2. Traffic Overlay (This stays on top of base layers)
+    const trafficLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=h,traffic&x={x}&y={y}&z={z}', {
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      zIndex: 10, // Higher number means it sits ON TOP of the map
+      opacity: 0.7
+    });
 
-      // Remove EVERY current tile layer from the map
+    let currentTrafficEnabled = false;
+
+    // 3. Universal Switcher
+    window.switchLayer = function (layerKey) {
+      // Remove only Base Layers (TileLayers that aren't the traffic layer)
       map.eachLayer(function (layer) {
-        if (layer instanceof L.TileLayer) {
+        if (layer instanceof L.TileLayer && layer !== trafficLayer) {
           map.removeLayer(layer);
         }
       });
 
-      // Add the one requested
       if (baseLayers[layerKey]) {
         baseLayers[layerKey].addTo(map);
       } else {
-        // Fallback to standard map
         baseLayers.osm.addTo(map);
       }
     };
+
+    // 4. Traffic Toggle
+    window.toggleTraffic = function (enabled) {
+      console.log('trafic enabled', enabled)
+      currentTrafficEnabled = enabled;
+
+      if (enabled) {
+        trafficLayer.addTo(map);
+      } else {
+        map.removeLayer(trafficLayer);
+      }
+    };
+
+
 
 
 

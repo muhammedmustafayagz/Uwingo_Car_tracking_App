@@ -326,7 +326,7 @@
 
     .stats-bar {
       position: absolute;
-      top: 15px;
+      bottom: 15px;
       left: 15px;
       z-index: 1000;
       background: rgba(255, 255, 255, 0.95);
@@ -509,7 +509,7 @@
     <div class="loading-text">Loading vehicle data...</div>
   </div>
 
-  <div class="stats-bar">
+  <div style="display: none;">
     <div class="stat-item">
       <div class="stat-value" id="totalVehicles">0</div>
       <div class="stat-label">Vehicles</div>
@@ -523,17 +523,19 @@
       <div class="stat-label">Violations</div>
     </div>
     <div class="stat-item" style="border-left: 1px solid #eee; padding-left: 10px; flex-direction: row; gap: 5px;">
-      <input type="checkbox" id="toggleAllLabels" style="cursor:pointer">
+      <input type="checkbox" id="toggleAllLabels" style="display:none">
       <div class="stat-label" style="cursor:pointer" onclick="document.getElementById('toggleAllLabels').click()">Show
         Info</div>
     </div>
   </div>
 
-  <button id="legendButton">
-    <i class="fas fa-info-circle"></i>
-  </button>
+  </div>
 
-  <div id="legendDropdown">
+  <!-- <button id="legendButton">
+    <i class="fas fa-info-circle"></i>
+  </button> -->
+
+  <!-- <div id="legendDropdown">
     <div class="legend-header">
       <h3>Map Legend</h3>
       <button class="close-legend" id="closeLegend">
@@ -590,16 +592,9 @@
         <div class="legend-description">Normal speed violation area</div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <script>
-    // Global variables
-    let map;
-    let vehicleMarkers = new Map();
-    let lastPositions = {};
-    let offPlates = new Set();
-    let firstLoad = true;
-    let userInteracted = false;
 
 
 
@@ -647,6 +642,15 @@
 
 
 
+    // Global variables
+    let map;
+    let vehicleMarkers = new Map();
+    let lastPositions = {};
+    let offPlates = new Set();
+    let firstLoad = true;
+    let userInteracted = false;
+
+
 
 
 
@@ -675,6 +679,87 @@
 
     let refreshInterval;
 
+    // 1. Define all your available layers here
+    // 1. Define all available base maps
+    const baseLayers = {
+      osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }),
+      satellite: L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google'
+      }),
+      topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenTopoMap'
+      }),
+      dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+      }),
+      light: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+      }),
+      voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+      }),
+      terrain: L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google'
+      }),
+      google_standard: L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google'
+      }),
+      google_transit: L.tileLayer('http://{s}.google.com/vt/lyrs=r,transit&x={x}&y={y}&z={z}', {
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google'
+      }),
+    };
+
+    // 2. Traffic Overlay (This stays on top of base layers)
+    const trafficLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=h,traffic&x={x}&y={y}&z={z}', {
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      zIndex: 10, // Higher number means it sits ON TOP of the map
+      opacity: 0.7
+    });
+
+    let currentTrafficEnabled = false;
+
+    // 3. Universal Switcher
+    window.switchLayer = function (layerKey) {
+      // Remove only Base Layers (TileLayers that aren't the traffic layer)
+      map.eachLayer(function (layer) {
+        if (layer instanceof L.TileLayer && layer !== trafficLayer) {
+          map.removeLayer(layer);
+        }
+      });
+
+      if (baseLayers[layerKey]) {
+        baseLayers[layerKey].addTo(map);
+      } else {
+        baseLayers.osm.addTo(map);
+      }
+    };
+
+    // 4. Traffic Toggle
+    window.toggleTraffic = function (enabled) {
+      console.log('trafic enabled', enabled)
+      currentTrafficEnabled = enabled;
+
+      if (enabled) {
+        trafficLayer.addTo(map);
+      } else {
+        map.removeLayer(trafficLayer);
+      }
+    };
+
+
+
+
+
+
+
+
+
     function initializeMap() {
       // console.log("1️⃣ Harita yuklendi ")
       map = L.map('map', {
@@ -686,12 +771,19 @@
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
 
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
+      // L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       markers.addTo(map);
       drawnItems.addTo(map);
 
       L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+      window.map = map;
+      window.updateLocation = function (lat, lng) {
+        map.flyTo([lat, lng], 17, {
+          animate: true,
+          duration: 1.5
+        });
+      };
 
       // Send ready message to React Native
       sendReady();
@@ -708,15 +800,15 @@
       // console.log("event listener is working 1.5")
 
       // Legend toggle
-      document.getElementById('legendButton').addEventListener('click', function () {
-        const legend = document.getElementById('legendDropdown');
-        legend.style.display = legend.style.display === 'block' ? 'none' : 'block';
-      });
+      // document.getElementById('legendButton').addEventListener('click', function () {
+      //   const legend = document.getElementById('legendDropdown');
+      //   legend.style.display = legend.style.display === 'block' ? 'none' : 'block';
+      // });
 
-      // Close legend
-      document.getElementById('closeLegend').addEventListener('click', function () {
-        document.getElementById('legendDropdown').style.display = 'none';
-      });
+      // // Close legend
+      // document.getElementById('closeLegend').addEventListener('click', function () {
+      //   document.getElementById('legendDropdown').style.display = 'none';
+      // });
 
       // Map interaction tracking
       map.on('zoomstart', () => userInteracted = true);
@@ -726,10 +818,10 @@
 
 
 
-      // Better ux
-      document.getElementById('toggleAllLabels').addEventListener('change', function () {
-        updateVehicleMarkers(); // Forces a re-render with the new label state
-      });
+      // // Better ux
+      // document.getElementById('toggleAllLabels').addEventListener('change', function () {
+      //   updateVehicleMarkers(); // Forces a re-render with the new label state
+      // });
 
       window.addEventListener('message', onMessage);
       document.addEventListener('message', onMessage);
@@ -747,7 +839,8 @@
     }
 
     async function takeDataAndUpdateUI(incomingData) {
-      // console.log("3️⃣ Processing incoming data...");
+      console.log("3️⃣ Processing incoming data...", incomingData);
+      console.log(incomingData)
 
       try {
         const hasData = Array.isArray(incomingData) && incomingData.length > 0;
@@ -764,7 +857,7 @@
 
         // Then update vehicle markers with violation detection
         await updateVehicleMarkers();
-        updateStats();
+        // updateStats();
 
       } catch (error) {
         handleProcessingError(error);
@@ -773,7 +866,7 @@
 
     async function loadInitialData() {
       try {
-        updateStats();
+        // updateStats();
 
         document.getElementById('loading').style.opacity = '0';
         setTimeout(() => {
@@ -794,11 +887,12 @@
     });
 
     async function onMessage(event) {
-      // console.log("2️⃣ OnMessage Calisiyor")
+      console.log("2️⃣ OnMessage Calisiyor", event)
       const payload = await parseMessageData(event);
       if (!payload) return;
 
       if (payload.type === 'FULL_UPDATE') {
+        console.log('from on Message ', payload.data)
         await takeDataAndUpdateUI(payload.data);
       }
     }
@@ -915,6 +1009,7 @@
 
 
     async function updateVehicleMarkers() {
+      console.log('update markers', vehiclesData.length)
       if (!vehiclesData || !Array.isArray(vehiclesData)) return;
 
 
@@ -965,11 +1060,11 @@
         if (vehicleMarkers.has(serialNumber)) {
           marker = vehicleMarkers.get(serialNumber);
           marker.setLatLng([lat, lng]);
-          marker.setIcon(createVehicleIcon(iconClass, bearing));
+          marker.setIcon(createVehicleIcon(iconClass, bearing, isWorking));
           marker.setPopupContent(createPopupContent(item, speed, speedLimit, isWorking, speedExceeded, isOutside));
         } else {
           marker = L.marker([lat, lng], {
-            icon: createVehicleIcon(iconClass, bearing)
+            icon: createVehicleIcon(iconClass, bearing, isWorking)
           }).addTo(markers);
           // We store the iconClass name in the options so the cluster function can read it
           marker.options.icon.options.className = iconClass;
@@ -994,37 +1089,97 @@
         lastPositions[serialNumber] = { lat, lng };
       });
 
+      // send message to RN In order to show violation
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'STATS_UPDATE',
+        violationsCount: offPlates.size,
+        violationCars: Array.from(offPlates)
+      }));
+
       if (firstLoad && latlngs.length > 0) {
         map.fitBounds(L.latLngBounds(latlngs), { padding: [50, 50] });
         firstLoad = false;
       }
     }
 
+    function getStatusColor(iconClass, isWorking) {
+      if (iconClass.includes('speed-exceeded')) { return 'rgba(255, 59, 48, 0.9)' }
+      else if (iconClass.includes('violations')) { return 'rgba(175, 82, 222, 0.6)' }
+      else return isWorking ? '#00E676' : '#999';
 
-    function createVehicleIcon(iconClass, currentBearing) {
-      // console.log('7️⃣ create vehicle Icon--')
-      // console.log('Icon class contains speed-exceeded:', iconClass.includes('speed-exceeded'))
-      // console.log('Icon class contains violations:', iconClass.includes('violations'))
+    };
+
+    // function createVehicleIcon(iconClass, currentBearing, isWorking) {
+    //   // console.log('7️⃣ create vehicle Icon--')
+
+    //   const borderColor = `border:3px solid ` + getStatusColor(iconClass, isWorking) + ';'
+    //   return L.divIcon({
+    //     html: `
+    //       <div style="position: relative; width: 40px; height: 40px; pointer-events:none;  >
+    //         <div class="${iconClass}" style="width: 100%; height: 100%; border-radius: 50%; 
+    //         ${borderColor}
+    //           transform: rotate(${currentBearing}deg);
+    //           background: 'rgba(233, 233, 233)'; 
+    //           display: flex; align-items: center; justify-content: center;">
+    //           <i class="fa-solid fa-location-arrow" style="color: #1785e1 ; 
+    //             font-size: 20px; transform: rotate(-45deg);"></i>
+    //         </div>
+    //       </div>
+    //     `,
+    //     className: 'vehicle-icon',
+    //     iconSize: [40, 40],
+    //     iconAnchor: [20, 20]
+    //   });
+
+    // }
+
+    function createVehicleIcon(iconClass, currentBearing, isWorking) {
+      // Maintaining your exact logic for border color calculation
+      const statusBorderColor = getStatusColor(iconClass, isWorking);
+
+      // Icon color logic based on isWorking (matches your RN iconColor)
+      const iconAndDotColor = isWorking ? '#00E676' : '#999';
 
       return L.divIcon({
         html: `
-          <div style="position: relative; width: 40px; height: 40px; ">
-            <div class="${iconClass}" style="width: 100%; height: 100%; border-radius: 50%; 
-              transform: rotate(${currentBearing}deg);
-              background: ${iconClass.includes('speed-exceeded') ? 'rgba(255, 59, 48, 0.6)' :
-            iconClass.includes('violations') ? 'rgba(175, 82, 222, 0.6)' :
-              'rgba(233, 233, 233)'}; 
-              display: flex; align-items: center; justify-content: center;">
-              <i class="fa-solid fa-location-arrow" style="color: #1785e1 ; 
-                font-size: 20px; transform: rotate(-45deg);"></i>
-            </div>
-          </div>
-        `,
+      <div style="position: relative; width: 48px; height: 48px; pointer-events: none;">
+        <div class="${iconClass}" style="
+          width: 44px; 
+          height: 44px; 
+          border-radius: 50%; 
+          border: 2px solid ${statusBorderColor}; 
+          background-color: #F8F9FA; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+          transform: rotate(${currentBearing}deg);
+        ">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${iconAndDotColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>
+          </svg>
+        </div>
+        
+        <div style="
+          width: 12px; 
+          height: 12px; 
+          border-radius: 50%; 
+          background-color: ${iconAndDotColor}; 
+          position: absolute; 
+          bottom: 4px; 
+          right: 4px; 
+          border: 2px solid #FFFFFF;
+          z-index: 2;
+        "></div>
+      </div>
+    `,
         className: 'vehicle-icon',
         iconSize: [40, 40],
         iconAnchor: [20, 20]
       });
     }
+
+
 
 
     function createPopupContent(item, speed, speedLimit, workingStatus, speedExceeded, hasRouteViolation) {
