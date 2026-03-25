@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useTranslation } from 'react-i18next';
+import { COLORS } from '@/constants';
 export default function RadioButton({ value, onChange }: { value: boolean, onChange: (val: boolean) => void }) {
   const { t } = useTranslation()
   return (
@@ -26,8 +27,8 @@ export default function RadioButton({ value, onChange }: { value: boolean, onCha
 const styles = StyleSheet.create({
   pickerContainer: { flexDirection: 'row', gap: 10, marginBottom: 20 },
   radioBtn: { flex: 1, padding: 12, borderWidth: 1, borderColor: '#ddd', borderRadius: 8, alignItems: 'center' },
-  radioBtnActive: { backgroundColor: '#007AFF', borderColor: '#007AFF' },
-  radioText: { fontWeight: '600', color: '#666' },
+  radioBtnActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
+  radioText: { fontWeight: '600', color: COLORS.inactive },
   radioTextActive: { color: 'white' },
 
 });

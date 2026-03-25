@@ -4,7 +4,7 @@ import i18n from '@/localization/i18n';
 const t = (key: string) => i18n.t(key);
 
 export const vehicleInsuranceApplicationSchema = z.object({
-  vehicleInsuranceId: z.number().int(),
+  // vehicleInsuranceId: z.number().int(),
 
   vehicleId: z.number()
     .int()
@@ -22,7 +22,7 @@ export const vehicleInsuranceApplicationSchema = z.object({
   endDate: z.string()
     .min(1, { error: () => t("validationErrors.endDateRequired") }),
 
-  companyApplicationId: z.string()
+  // companyApplicationId: z.string()
 
 }).refine((data) => {
   const start = new Date(data.startDate);

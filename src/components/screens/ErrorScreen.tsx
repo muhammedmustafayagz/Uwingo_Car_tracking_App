@@ -1,12 +1,14 @@
+import { COLORS } from '@/constants';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-
+import { useTranslation } from 'react-i18next';
 interface ErrorScreenProps {
   message?: string;
   onRetry: () => void;
 }
 
 const ErrorScreen = ({ message = "Something went wrong while loading the data.", onRetry }: ErrorScreenProps) => {
+  const { t } = useTranslation()
   return (
     <View style={styles.errorContainer}>
       <View style={styles.iconCircle}>
@@ -16,7 +18,7 @@ const ErrorScreen = ({ message = "Something went wrong while loading the data.",
       <Text style={styles.errorMessage}>{message}</Text>
 
       <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-        <Text style={styles.retryText}>Try Again</Text>
+        <Text style={styles.retryText}>{t("common.tryAgain")}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
   },
   errorIcon: {
     fontSize: 40,
-    color: '#EF4444',
+    color: COLORS.danger,
     fontWeight: 'bold',
   },
   errorTitle: {
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   retryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: COLORS.primary,
     paddingHorizontal: 40,
     paddingVertical: 15,
     borderRadius: 12,

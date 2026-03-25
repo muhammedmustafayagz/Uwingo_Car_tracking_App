@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useTranslation } from 'react-i18next'
+import { COLORS } from '@/constants'
 
 export default function SaveButton({ label = 'saveDetails', onPress }: { label?: string, onPress: () => void }) {
 
@@ -18,6 +19,6 @@ export default function SaveButton({ label = 'saveDetails', onPress }: { label?:
 }
 
 const styles = StyleSheet.create({
-  saveButton: { backgroundColor: '#007AFF', padding: 16, borderRadius: 10, alignItems: 'center', marginBottom: 30 },
+  saveButton: { backgroundColor: COLORS.primary, padding: 16, borderRadius: 10, alignItems: 'center', marginBottom: 30 },
   saveButtonText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
 })

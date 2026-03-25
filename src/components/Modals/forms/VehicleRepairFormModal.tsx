@@ -36,16 +36,7 @@ const vehicleRepairFormModal = ({
   const { t } = useTranslation();
   const [method, setMethod] = useState<"put" | "post">('post')
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
-    resolver: zodResolver(vehicleRepairApplicationSchema.pick({
-      vehicleId: true,
-      repairDate: true,
-      faultType: true,
-      faultDescription: true,
-      repairAction: true,
-      performedBy: true,
-      repairCost: true,
-      notes: true,
-    })),
+    resolver: zodResolver(vehicleRepairApplicationSchema),
     defaultValues: {
       vehicleId: undefined,
       repairDate: new Date().toISOString().split('.')[0],

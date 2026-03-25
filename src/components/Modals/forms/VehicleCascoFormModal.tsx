@@ -36,14 +36,7 @@ const vehicleCascoFormModal = ({
   const [method, setMethod] = useState<"put" | "post">('post')
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     // Using .partial() or .pick() here so it doesn't complain about missing fields
-    resolver: zodResolver(vehicleCascoApplicationSchema.pick({
-      vehicleId: true,
-      startDate: true,
-      endDate: true,
-      insuranceCompany: true,
-      policyNumber: true,
-
-    })),
+    resolver: zodResolver(vehicleCascoApplicationSchema),
     defaultValues: {
       vehicleId: undefined,
       startDate: undefined,

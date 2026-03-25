@@ -4,7 +4,7 @@ import i18n from '@/localization/i18n';
 const t = (key: string) => i18n.t(key);
 
 export const vehicleRepairApplicationSchema = z.object({
-  vehicleRepairId: z.number().int(),
+  // vehicleRepairId: z.number().int(),
   
   vehicleId: z.number()
     .int()
@@ -33,7 +33,7 @@ export const vehicleRepairApplicationSchema = z.object({
 
   images: z.array(z.string()).default([]),
 
-  companyApplicationId: z.string()
+  // companyApplicationId: z.string()
 });
 
 export type vehicleRepairApplicationSchemaT = z.infer<typeof vehicleRepairApplicationSchema>;

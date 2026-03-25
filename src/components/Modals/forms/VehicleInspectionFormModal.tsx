@@ -38,13 +38,7 @@ const VehicleInspectionFormModal = ({
   const [method, setMethod] = useState<"put" | "post">('post')
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     // Using .partial() or .pick() here so it doesn't complain about missing fields
-    resolver: zodResolver(vehicleInspectionApplicationTSchema.pick({
-      vehicleId: true,
-      inspectionDate: true,
-      expiryDate: true,
-      notes: true
-
-    })),
+    resolver: zodResolver(vehicleInspectionApplicationTSchema),
     defaultValues: {
       vehicleId: undefined,
       inspectionDate: new Date().toISOString().split('.')[0],

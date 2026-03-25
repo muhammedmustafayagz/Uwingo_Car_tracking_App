@@ -87,8 +87,8 @@ const VehicleCasco = () => {
         vehicleId: junction?.vehicleId || null,
         policyNumber: junction?.policyNumber || null,
         insuranceCompany: junction?.insuranceCompany || null,
-        startDate: junction?.startDate || null,
-        endDate: junction?.endDate || null,
+        startDate: junction?.startDate.split('T')[0] || null,
+        endDate: junction?.endDate.split('T')[0] || null,
 
         vehicle: `${vehicle?.plate} (${vehicle?.make} ${vehicle?.model})` || null,
 

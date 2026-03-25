@@ -97,7 +97,7 @@ const VehicleMaintenance = () => {
         vehicle_Id: junction?.vehicle_Id || null,
         periodInMonths: junction?.periodInMonths || null,
         periodInKilometers: junction?.periodInKilometers || null,
-        lastMaintenanceDate: junction?.lastMaintenanceDate || null,
+        lastMaintenanceDate: junction?.lastMaintenanceDate.split('T')[0] || null,
         nextMaintenanceDate: junction?.nextMaintenanceDate || null,
         description: junction?.description || null,
         vehicle: vehicle?.plate || null,
@@ -178,7 +178,7 @@ const VehicleMaintenance = () => {
   }
 
 
-  // {isPending&&<SplashScreen/>}
+
   if (vehicleMaintenanceIsPending || vehiclesIsPending) return (
     <SplashScreen />
   )
@@ -222,7 +222,7 @@ const VehicleMaintenance = () => {
           ?.filter((item) => item?.vehicleId !== undefined)
           .map((item) => ({
             label: item.plate,
-            value: item.vehicleId as number // Casting is safe here because of the filter
+            value: item.vehicleId as number
           }))}
       />
 

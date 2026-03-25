@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, ScrollView, Switch } from 'react-native';
 import { Layers, Globe, Map as MapIcon, Satellite, Moon, Sun, Mountain, Palette, Car, TrainFront } from 'lucide-react-native';
 import { COLORS } from '@/constants';
-
+import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
 interface Props {
   onLayerChange: (key: string) => void;
   onTrafficToggle: (enabled: boolean) => void;
@@ -13,18 +14,23 @@ const MapLayerSwitcher = ({ onLayerChange, onTrafficToggle, position }: Props) =
   const [isOpen, setIsOpen] = useState(false);
   const [trafficEnabled, setTrafficEnabled] = useState(false);
   const [activeLayer, setActiveLayer] = useState('osm');
+  const { t, i18n } = useTranslation()
 
-  const layers = [
-    { id: 'google_standard', label: 'Google Standard', icon: MapIcon },
-    { id: 'google_transit', label: 'Google Transit', icon: TrainFront },
-    { id: 'osm', label: 'Standard', icon: MapIcon },
-    { id: 'satellite', label: 'Satellite', icon: Satellite },
-    { id: 'topo', label: 'Topology', icon: Mountain },
-    { id: 'dark', label: 'Dark Mode', icon: Moon },
-    { id: 'light', label: 'Light Mode', icon: Sun },
-    { id: 'voyager', label: 'Voyager', icon: Globe },
-    { id: 'terrain', label: 'Terrain', icon: Mountain },
-  ];
+  const layers = useMemo(() => {
+
+    return ([
+      { id: 'google_standard', label: 'layers.google_standard', icon: MapIcon },
+      { id: 'google_transit', label: 'layers.google_transit', icon: TrainFront },
+      { id: 'osm', label: 'layers.osm', icon: MapIcon },
+      { id: 'satellite', label: 'layers.satellite', icon: Satellite },
+      { id: 'topo', label: 'layers.topo', icon: Mountain },
+      { id: 'dark', label: 'layers.dark', icon: Moon },
+      { id: 'light', label: 'layers.light', icon: Sun },
+      { id: 'voyager', label: 'layers.voyager', icon: Globe },
+      { id: 'terrain', label: 'layers.terrain', icon: Mountain },
+    ])
+  }
+    , [i18n])
 
   const positionCoordinates = position === 'bottomRight' ? { right: 10, bottom: 126, marginVertical: 4 } : { left: 15, bottom: 10 }
   const handleTrafficChange = (val: boolean) => {
@@ -40,7 +46,7 @@ const MapLayerSwitcher = ({ onLayerChange, onTrafficToggle, position }: Props) =
           <View style={styles.trafficRow}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Car size={18} color={trafficEnabled ? COLORS.primary : "#555"} />
-              <Text style={styles.trafficText}>Traffic</Text>
+              <Text style={styles.trafficText}>{t('layers.traffic')}</Text>
             </View>
             <Switch
               value={trafficEnabled}
@@ -64,7 +70,7 @@ const MapLayerSwitcher = ({ onLayerChange, onTrafficToggle, position }: Props) =
               >
                 <layer.icon size={18} color={activeLayer === layer.id ? COLORS.primary : "#555"} />
                 <Text style={[styles.layerLabel, activeLayer === layer.id && styles.activeLabel]}>
-                  {layer.label}
+                  {t(layer.label)}
                 </Text>
               </TouchableOpacity>
             ))}

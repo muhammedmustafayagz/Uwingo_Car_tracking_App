@@ -43,16 +43,7 @@ const VehicleMaintenanceFormModal = ({
   const [method, setMethod] = useState<"put" | "post">('post')
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     // Using .partial() or .pick() here so it doesn't complain about missing fields
-    resolver: zodResolver(VehicleMaintenanceApplicationSchema.pick({
-      vehicle_Id: true,
-      lastMaintenanceDate: true,
-      periodInMonths: true,
-      periodInKilometers: true,
-      kilometer: true,
-      performedBy: true,
-      description: true,
-
-    })),
+    resolver: zodResolver(VehicleMaintenanceApplicationSchema),
     defaultValues: {
       vehicle_Id: undefined,
       lastMaintenanceDate: undefined,
@@ -112,7 +103,6 @@ const VehicleMaintenanceFormModal = ({
             />
           </View>
           <ScrollView style={styles.form}>
-            {/* vehicle plate */}
             <Text style={styles.label}></Text>{t('vehicleConnectedDevicePage.selectVehicle')}
             <Controller
               control={control}
@@ -138,7 +128,6 @@ const VehicleMaintenanceFormModal = ({
 
               )} />
 
-            {/* last maintenance */}
             <Text style={styles.label}> {t('vehicleMaintenancePage.lastMaintenanceDate')}</Text>
             <Controller
               control={control}
@@ -148,7 +137,6 @@ const VehicleMaintenanceFormModal = ({
               )}
             />
 
-            {/* Period In Month */}
 
             <Text style={styles.label}>{t('vehicleMaintenancePage.periodInMonths')}</Text>
             <Controller
@@ -178,7 +166,6 @@ const VehicleMaintenanceFormModal = ({
 
 
 
-            {/* Period In KM */}
             <Text style={styles.label}>{t('vehicleMaintenancePage.periodInKiloMeters')}</Text>
             <Controller
               control={control}
@@ -205,11 +192,11 @@ const VehicleMaintenanceFormModal = ({
               )}
             />
 
-            {/* KM */}
             <Text style={styles.label}> {t("common.kilometer")}</Text>
             <Controller
               control={control}
               name="kilometer"
+
               render={({ field: { onChange, value } }) => (
 
                 <>
@@ -219,6 +206,7 @@ const VehicleMaintenanceFormModal = ({
                     placeholderTextColor="#999"
                     style={[styles.input, errors.kilometer && styles.inputError]}
                     value={String(value)}
+                    keyboardType="numeric"
                     onChangeText={(val) => onChange(Number(val))}
                     placeholder="kilometer"
                   />
@@ -234,7 +222,6 @@ const VehicleMaintenanceFormModal = ({
               )} />
 
 
-            {/* Performed By  */}
 
             <Text style={styles.label}> {t("vehicleMaintenancePage.performedBy")}</Text>
             <Controller
@@ -263,7 +250,6 @@ const VehicleMaintenanceFormModal = ({
 
               )} />
 
-            {/* Description */}
             <Text style={styles.label}> {t('common.description')}</Text>
             <Controller
               control={control}

@@ -13,6 +13,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AppState, Modal, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
 import MapControls from "@/components/Map/MapControls";
+import { NormalizedErrorT } from "@/types/auth";
 const mapHtmlFile = require("/assets/mapView.html");
 
 
@@ -48,10 +49,9 @@ export default function MapView() {
 
   const [selectedLayer, setSelectedLayer] = useState<'osm' | 'satellite' | 'topo'>('osm');
 
-
-
   const [isLoading, setIsLoading] = useState(true);
   const [error, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [zoomInfo, setZoomInfo] = useState({
     current: 7,
     min: 0,
@@ -206,9 +206,11 @@ export default function MapView() {
       latestVehiclesRef.current = vehicles;
       postFullUpdateToWebView(vehicles);
       setIsLoading(false);
-    } catch (err) {
-      console.log("Fetch error:", err);
+    } catch (err: any) {
+
+      const error = err as NormalizedErrorT;
       setIsError(true)
+      setErrorMessage(error?.message)
     }
   }
 
@@ -232,17 +234,6 @@ export default function MapView() {
       }
     };
   }, [isMapReady]); // Add isMapReady dependency so it retries sending if map becomes ready during a fetch
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -359,7 +350,7 @@ export default function MapView() {
     <View style={styles.container}>
 
 
-      {isLoading && (
+      {isLoading && !error && (
         <Modal
           animationType="fade"
         >
@@ -401,13 +392,13 @@ export default function MapView() {
 
 
 
-      <MapLayerSwitcher
+      {vehiclesForOverlay.length > 0 && <MapLayerSwitcher
         onLayerChange={handleLayerChange}
         onTrafficToggle={handleTrafficToggle}
         position="bottomRight"
-      />
+      />}
 
-      {webviewRef.current && <MapControls
+      {webviewRef.current && vehiclesForOverlay.length > 0 && <MapControls
         webViewRef={webviewRef}
         zoomInfo={zoomInfo}
         circles
@@ -415,10 +406,11 @@ export default function MapView() {
 
 
 
-      <MapLegend />
+      {vehiclesForOverlay.length > 0 && <MapLegend />}
 
 
       {error && <ErrorScreen
+        message={errorMessage}
         onRetry={() => fetchAndSend()}
       />}
 

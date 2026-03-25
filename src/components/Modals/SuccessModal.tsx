@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { AlertCircle, CircleCheckBig, X } from 'lucide-react-native';
+import { COLORS } from '@/constants';
 
 interface SuccessModalProps {
   visible: boolean;
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   retryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: COLORS.primary,
   },
   retryButtonText: {
     color: 'white',

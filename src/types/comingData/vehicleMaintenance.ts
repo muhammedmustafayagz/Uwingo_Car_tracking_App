@@ -7,7 +7,7 @@ const t = (key: string) => i18n.t(key);
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$/;
 
 export const VehicleMaintenanceApplicationSchema = z.object({
-  periodicMaintenanceId: z.number().int(),
+  // periodicMaintenanceId: z.number().int(),
 
   vehicle_Id: z.number()
     .int()
@@ -28,21 +28,22 @@ export const VehicleMaintenanceApplicationSchema = z.object({
 
   kilometer: z.number().int().min(0, { error: () => t("validationErrors.invalidKilometer") }),
 
-  nextMaintenanceDate: z.string()
-    .regex(ISO_DATE_REGEX, { error: () => t("validationErrors.invalidDateFormat") }),
+  // nextMaintenanceDate: z.string()
+  //   .regex(ISO_DATE_REGEX, { error: () => t("validationErrors.invalidDateFormat") }),
 
-  companyApplicationId: z.string(),
+  // companyApplicationId: z.string(),
 
   images: z.array(z.string()).default([]),
 
-}).refine((data) => {
-  const last = new Date(data.lastMaintenanceDate);
-  const next = new Date(data.nextMaintenanceDate);
-  return next >= last;
-}, {
-  error: () => t("validationErrors.maintenanceDateComparison"),
-  path: ["nextMaintenanceDate"],
-});
+})
+// .refine((data) => {
+//   const last = new Date(data.lastMaintenanceDate);
+//   const next = new Date(data.nextMaintenanceDate);
+//   return next >= last;
+// }, {
+//   error: () => t("validationErrors.maintenanceDateComparison"),
+//   path: ["nextMaintenanceDate"],
+// });
 
 export type VehicleMaintenanceApplicationSchemaT = z.infer<typeof VehicleMaintenanceApplicationSchema>;
 

@@ -4,6 +4,16 @@
   "true": "Yes",
   "false": "No",
   "saveDetails": "Save Details",
+  "normalizedErrors": {
+    "unexpected": "An unexpected error occurred.",
+    "authError": "Your session has expired or the data entered is incorrect.",
+    "notFound": "The content you are looking for was not found.",
+    "serverError": "A server error occurred. Please try again.",
+    "defaultServer": "An unexpected server error occurred.",
+    "noNetwork": "No internet connection or the server is unreachable.",
+    "noResponse": "Could not reach the server. Please try again.",
+    "requestSetup": "An error occurred while preparing the request."
+  },
   "validationErrors": {
     "usernameMin": "Username must be at least 3 characters",
     "usernameMax": "Username must be less than 20 characters",
@@ -55,7 +65,48 @@
     "fieldNameLength": "The field name should be at least 3 characters",
     "descriptionLength": "The description should be at least 3 characters"
   },
+  "maplegend": {
+    "headerTitle": "Map Legend",
+    "movingVehicle": {
+      "title": "Moving Vehicle",
+      "description": "Ignition on and vehicle is in motion."
+    },
+    "stationaryVehicle": {
+      "title": "Stationary Vehicle",
+      "description": "Ignition off or vehicle is stopped."
+    },
+    "movingRouteViolation": {
+      "title": "Moving & Route Violation",
+      "description": "Vehicle is moving but off the designated route."
+    },
+    "stationaryRouteViolation": {
+      "title": "Stationary & Route Violation",
+      "description": "Vehicle is stopped but in an off-route location."
+    },
+    "movingSpeedViolation": {
+      "title": "Moving & Speed Violation",
+      "description": "Vehicle is moving and exceeding the speed limit."
+    },
+    "stationarySpeedViolation": {
+      "title": "Stationary & Speed Violation",
+      "description": "Speed violation occurred and vehicle is now stopped."
+    }
+  },
+  "layers": {
+    "traffic": "Traffic",
+    "google_standard": "Google Standart",
+    "google_transit": "Google Transit",
+    "osm": "Standart",
+    "satellite": "Satellite",
+    "topo": "Topology",
+    "dark": "Dark Mode",
+    "light": "Light Mode",
+    "voyager": "Voyager",
+    "terrain": "Terrain"
+  },
   "common": {
+    "tryAgain": "Try Again",
+    "loadingData": "Loading application data...",
     "allVehicles": "All Vehicles",
     "returnToList": "Return To List",
     "movingVehicles": "Moving Vehicles",

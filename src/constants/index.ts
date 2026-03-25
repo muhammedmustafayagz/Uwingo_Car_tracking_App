@@ -25,10 +25,10 @@ export const COLORS = {
 
 
   // --- Functional Action Colors ---
-  danger: '#C62828',            // Wrong, Error, Delete (Deep Red)
+  danger: '#EF4444',            // Wrong, Error, Delete (Deep Red)
   dangerLight: '#FFEBEE',       // Background for error alerts/delete buttons
 
-  info: '#0277BD',              // Edit, Details, Blue links (Complementary to Orange)
+  info: "#007AFF",              // Edit, Details, Blue links (Complementary to Orange)
   infoLight: '#E1F5FE',         // Background for edit buttons
 
   success: '#2E7D32',           // Save, Complete, Valid (Forest Green)
@@ -40,7 +40,8 @@ export const COLORS = {
   // --- Neutrals (Text & Surfaces) ---
   background: '#F8F9FA',        // Screen background color
   surface: '#FFFFFF',           // Card and Modal backgrounds
-  textPrimary: '#2D2D2D',       // Main headers and body text
+  // textPrimary: '#2D2D2D',       // Main headers and body text
+  textPrimary: '#0f2d59',       // Main headers and body text
   textSecondary: '#757575',     // Subtitles and labels
   border: '#E0E0E0',            // Subtle dividers and input borders
   disabled: '#BDBDBD'

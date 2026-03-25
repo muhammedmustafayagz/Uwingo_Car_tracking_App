@@ -1,42 +1,43 @@
-import { NormalizedErrorT } from "../../types/auth";
-import axios from "axios";
-import { AxiosError } from "axios";
+import { NormalizedErrorT } from "@/types/auth";
+import axios, { AxiosError } from "axios";
+import i18n from '@/localization/i18n';
+
 
 export function normalizeAxiosError(error: unknown): NormalizedErrorT {
-  console.log(error)
+  console.log("Current Lang:", i18n.language);
+
+  // Use the global i18n.t function
+  const t = (key: string) => i18n.t(`${key}`);
+
   if (!axios.isAxiosError(error)) {
-    return { message: "Beklenmeyen bir hata oluştu." };
+    return { message: t("normalizedErrors.unexpected") };
   }
 
   const err = error as AxiosError;
 
-  // ---- A) Server responded with error (error.response) ----
+  // ---- A) Server responded with error ----
   if (err.response) {
     const status = err.response.status;
 
     switch (status) {
       case 401:
-        // Token yenileme mantığı Interceptor'da ele alınacağı için
-        // burada sadece normalize edilmiş bir hata mesajı dönüyoruz.
-        return { message: "Oturum süreniz doldu veya Girdiginiz Veriler Hatalıdır.", status };
+        return { message: t("normalizedErrors.authError"), status };
       case 404:
-        return { message: "Aradığınız içerik bulunamadı.", status };
+        return { message: t("normalizedErrors.notFound"), status };
       case 500:
-        return { message: "Sunucuda bir hata oluştu. Lütfen tekrar deneyin.", status };
+        return { message: t("normalizedErrors.serverError"), status };
       default:
-        return { message: "Beklenmedik bir sunucu hatası oluştu.", status };
+        return { message: t("normalizedErrors.defaultServer"), status };
     }
   }
 
-  // ---- B) Request sent but no response (error.request) ----
+  // ---- B) Request sent but no response ----
   if (err.request) {
-    console.log()
     if (err.code === "ERR_NETWORK") {
-      return { message: "İnternet bağlantısı yok veya sunucuya ulaşılamıyor." };
+      return { message: t("normalizedErrors.noNetwork") };
     }
-    return { message: "Sunucuya ulaşılamadı. Lütfen tekrar deneyin." };
+    return { message: t("normalizedErrors.noResponse") };
   }
 
-  // ---- C) Something else happened ----
-  return { message: "İstek hazırlanırken bir hata oluştu." };
+  return { message: t("normalizedErrors.requestSetup") };
 }

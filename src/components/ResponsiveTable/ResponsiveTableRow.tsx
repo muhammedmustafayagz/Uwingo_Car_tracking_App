@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LucideIconButton from '@/components/IconButton/LucideIconButton';
 import { ColumnConfig } from '@/components/ResponsiveTable/types';
 import { useTranslation } from 'react-i18next';
+import { COLORS } from '@/constants';
 interface ResponsiveTableRowProps<T> {
   item: T;
   expandedId: string | number | null;
@@ -64,7 +65,7 @@ const ResponsiveTableRow = <T extends Record<string, any>>({
 
               <LucideIconButton
                 icon='Pencil'
-                containerColor={"#007AFF"}
+                containerColor={COLORS.info}
                 onPress={() => onEdit?.(item)}
                 text={t('common.edit')}
               />
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   visibleRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15 },
   cell: { fontSize: 14 },
   button: { width: 40, alignItems: 'center' },
-  buttonText: { color: '#007AFF', fontWeight: 'bold' },
+  buttonText: { color: COLORS.primary, fontWeight: 'bold' },
   dropdown: { backgroundColor: '#f9f9f9', padding: 15, borderRadius: 8, marginHorizontal: 10, marginBottom: 10 },
   detailItem: { flexDirection: 'row', marginBottom: 8, alignItems: 'center', gap: 5 },
   label: { fontWeight: '600', color: '#666', },

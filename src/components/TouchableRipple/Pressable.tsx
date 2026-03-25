@@ -1,3 +1,4 @@
+import { COLORS } from '@/constants';
 import React from 'react';
 import {
   Pressable,
@@ -23,7 +24,7 @@ interface DynamicPressableProps extends NativePressableProps {
 export const DynamicPressable: React.FC<DynamicPressableProps> = ({
   title,
   onPress,
-  normalColor = '#007AFF', // Varsayılan Mavi
+  normalColor = COLORS.primary, // Varsayılan Mavi
   pressedColor = '#005ACF', // Varsayılan Koyu Mavi
   extraPressedStyle = {},
   ...rest // Geri kalan tüm standart Pressable prop'ları (ör. accessibility, testID)

@@ -19,6 +19,7 @@ import loginService from "@/api/services/login/login";
 import ErrorModal from "@/components/Modals/ErrorModal";
 import { useAuthStore } from "@/store/local/authStore";
 import { loginCredentialsValidationSchema, loginCredentialsValidationSchemaT } from "@/types/auth";
+import { COLORS } from "@/constants";
 
 export default function LoginScreen() {
   const {
@@ -178,7 +179,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: COLORS.background,
   },
   container: {
     flex: 1,
@@ -210,12 +211,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#0f2d59",
+    color: COLORS.textPrimary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
+    color: COLORS.textSecondary,
   },
   form: {
     backgroundColor: "white",
@@ -230,20 +231,9 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
-  loginButton: {
-    backgroundColor: "#6366f1",
-    borderRadius: 12,
-    paddingVertical: 16,
-    marginBottom: 32,
-    alignItems: "center",
-    shadowColor: "#6366f1",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
+
   loginButtonDisabled: {
-    backgroundColor: "#a5a7f3",
+    backgroundColor: COLORS.primaryLight,
     opacity: 0.8,
   },
   loginButtonText: {
@@ -257,7 +247,8 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1a1a1a",
+    color: COLORS.textPrimary,
+    // color: "#1a1a1a",
     marginBottom: 8,
   },
   input: {
@@ -268,14 +259,14 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     color: "#1a1a1a",
-    backgroundColor: "#fafafa",
+    backgroundColor: COLORS.background,
   },
   inputError: {
-    borderColor: "#ef4444",
-    backgroundColor: "#fef2f2",
+    borderColor: COLORS.danger,
+    backgroundColor: COLORS.background,
   },
   errorText: {
-    color: "#ef4444",
+    color: COLORS.danger,
     fontSize: 12,
     marginTop: 4,
     marginLeft: 4,
@@ -290,7 +281,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   bottomLoginButton: {
-    backgroundColor: "#6366f1",
+    backgroundColor: COLORS.primary,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: "center",
@@ -301,18 +292,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
   },
-  signupContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  signupText: {
-    color: "#666",
-    fontSize: 14,
-  },
-  signupLink: {
-    color: "#6366f1",
-    fontSize: 14,
-    fontWeight: "600",
-  },
+  // signupContainer: {
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // signupText: {
+  //   color: "#666",
+  //   fontSize: 14,
+  // },
+  // signupLink: {
+  //   color: "#6366f1",
+  //   fontSize: 14,
+  //   fontWeight: "600",
+  // },
 })

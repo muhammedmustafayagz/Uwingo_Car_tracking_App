@@ -174,7 +174,7 @@ const VehicleInsurance = () => {
 
   // Manually define your columns to map labels to specific object keys
   const columns: ColumnConfig<dataShapeToShow>[] = [
-    { label: 'vehiclesPage.vehilcePlate', key: 'vehicle' },
+    { label: 'vehiclesPage.vehiclePlate', key: 'vehicle' },
     { label: 'vehicleCascoPage.policyNumber', key: 'policyNumber' },
     { label: 'vehicleCascoPage.startDate', key: 'startDate' },
     { label: 'vehicleCascoPage.endDate', key: 'endDate' },

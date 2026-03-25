@@ -4,7 +4,7 @@ import i18n from '@/localization/i18n';
 const t = (key: string) => i18n.t(key);
 
 export const vehicleInspectionApplicationTSchema = z.object({
-  vehicleInspectionId: z.number().int(),
+  // vehicleInspectionId: z.number().int(),
 
   vehicleId: z.number()
     .int()
@@ -19,7 +19,7 @@ export const vehicleInspectionApplicationTSchema = z.object({
   notes: z.string()
     .optional(),
 
-  companyApplicationId: z.string()
+  // companyApplicationId: z.string()
 
 }).refine((data) => {
   const start = new Date(data.inspectionDate);

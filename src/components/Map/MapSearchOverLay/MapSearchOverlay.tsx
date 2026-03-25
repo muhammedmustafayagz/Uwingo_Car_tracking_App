@@ -766,7 +766,7 @@ const styles = StyleSheet.create({
   chipText: { color: '#444' },
   resultItem: { flexDirection: 'row', padding: 12, borderBottomWidth: 1, borderBottomColor: '#F0F0F0', alignItems: 'center' },
   resultTitle: { fontWeight: '600', fontSize: 14 },
-  resultSub: { fontSize: 11, color: '#999' },
+  resultSub: { fontSize: 11, color: COLORS.inactive },
 
 
   backButton: {

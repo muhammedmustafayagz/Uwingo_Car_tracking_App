@@ -5,7 +5,7 @@ const t = (key: string) => i18n.t(key);
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$/;
 
 export const vehicleCascoApplicationSchema = z.object({
-  vehicleCascoId: z.number().int(),
+  // vehicleCascoId: z.number().int(),
 
   vehicleId: z.number()
     .int()
@@ -25,7 +25,7 @@ export const vehicleCascoApplicationSchema = z.object({
     .regex(ISO_DATE_REGEX, { error: () => t("validationErrors.invalidDateFormat") })
     .refine((val) => !isNaN(Date.parse(val)), { error: () => t("validationErrors.invalidDateValue") }),
 
-  companyApplicationId: z.string()
+  // companyApplicationId: z.string()
 
 }).refine((data) => {
   const start = new Date(data.startDate);

@@ -4,6 +4,55 @@
   "N/A": "Atanmamış",
   "null": "Atanmamış",
   "saveDetails": "Detayları Kaydet",
+  "normalizedErrors": {
+    "unexpected": "Beklenmeyen bir hata oluştu.",
+    "authError": "Oturum süreniz doldu veya veriler hatalı.",
+    "notFound": "İçerik bulunamadı.",
+    "serverError": "Sunucu hatası. Tekrar deneyin.",
+    "defaultServer": "Sunucu hatası oluştu.",
+    "noNetwork": "Bağlantı yok.",
+    "noResponse": "Sunucuya ulaşılamadı.",
+    "requestSetup": "İstek hatası."
+  },
+  "maplegend": {
+    "headerTitle": "Harita Lejantı",
+    "movingVehicle": {
+      "title": "Hareketli Araç",
+      "description": "Kontak açık ve araç hareket halinde."
+    },
+    "stationaryVehicle": {
+      "title": "Duran Araç",
+      "description": "Kontak kapalı veya araç sabit."
+    },
+    "movingRouteViolation": {
+      "title": "Hareketli & Güzergah İhlali",
+      "description": "Araç hareket halinde ancak rota dışına çıktı."
+    },
+    "stationaryRouteViolation": {
+      "title": "Duran & Güzergah İhlali",
+      "description": "Araç duruyor ancak rota dışı bir konumda."
+    },
+    "movingSpeedViolation": {
+      "title": "Hareketli & Hız İhlali",
+      "description": "Araç hareket halinde ve hız limitini aşıyor."
+    },
+    "stationarySpeedViolation": {
+      "title": "Duran & Hız İhlali",
+      "description": "Hız ihlali yapıldı ve araç şu an duruyor."
+    }
+  },
+  "layers": {
+    "traffic": "Trafik",
+    "google_standard": "Google Standart",
+    "google_transit": "Google Toplu Taşıma",
+    "osm": "Standart",
+    "satellite": "Uydu",
+    "topo": "Topografya",
+    "dark": "Koyu Tema",
+    "light": "Açık Tema",
+    "voyager": "Seyahat",
+    "terrain": "Arazi"
+  },
   "validationErrors": {
     "usernameMin": "Kullanıcı adı en az 3 karakter olmalıdır",
     "usernameMax": "Kullanıcı adı 20 karakterden az olmalıdır",
@@ -56,6 +105,8 @@
     "descriptionLength": "Açıklama en az 3 karakter olmalıdır"
   },
   "common": {
+    "tryAgain": "Tekrar Deneyin",
+    "loadingData": "Uygulama verileri yükleniyor...",
     "allVehicles": "Tüm Araçlar",
     "returnToList": "Listeye Dön",
     "movingVehicles": "Hareketli Araçlar",

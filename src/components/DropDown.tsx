@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useTranslation } from 'react-i18next';
+import { COLORS } from '@/constants';
 interface Props {
   data: { label: string; value: any }[];
   onChange: (value: any) => void;
@@ -27,7 +28,7 @@ const DropdownComponent = ({ data, onChange, value, label = "" }: Props) => {
       ) : (
         <Dropdown
           key={dropdownKey}
-          style={[styles.dropdown, isFocus && { borderColor: '#007AFF' }]}
+          style={[styles.dropdown, isFocus && { borderColor: COLORS.primary }]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   noDataText: {
-    color: '#888',
+    color: COLORS.textSecondary,
     fontSize: 14,
     fontStyle: 'italic',
     textAlign: 'center'

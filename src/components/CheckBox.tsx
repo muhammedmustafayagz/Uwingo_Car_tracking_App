@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
 import { Check } from 'lucide-react-native';
+import { COLORS } from '@/constants';
 
 const Checkbox = ({ label, value, onChange }: { label: string, value: boolean, onChange: (newval: boolean) => void }) => {
   return (
@@ -26,14 +27,14 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     borderWidth: 2,
-    borderColor: '#007AFF',
+    borderColor: COLORS.primary,
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
   },
   checkedBox: {
-    backgroundColor: '#007AFF',
+    backgroundColor: COLORS.primary,
   },
   label: {
     fontSize: 16,

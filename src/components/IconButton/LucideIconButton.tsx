@@ -14,6 +14,7 @@ import {
 
 import { LucideIcon, icons } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import { COLORS } from '@/constants';
 // --- TİP TANIMLARI ---
 
 export type LucideIconNames = keyof typeof icons;
@@ -51,7 +52,7 @@ const LucideIconButton = React.forwardRef<View, IconButtonProps>(
       icon,
       iconColor = '#FFF',
       textColor = '#FFF',
-      containerColor = '#007AFF',
+      containerColor = COLORS.primary,
       size = 16,
       onPress,
       disabled = false,

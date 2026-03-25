@@ -13,7 +13,11 @@ const BASE_URL = Config.API_BASE_URL;
 const MONGO_BASE_URL = Config.MONGO_BASE_URL;
 
 export const ENDPOINTS = {
-  // ✅
+
+
+  MapData: {
+    get: `${BASE_URL}/api/InstantData/get-instant-data`
+  },// ✅
   Vehicles: {
     create: `${BASE_URL}/api/Vehicles/create-vehicle`,
     get: `${BASE_URL}/api/Vehicles/get-vehicles`,
